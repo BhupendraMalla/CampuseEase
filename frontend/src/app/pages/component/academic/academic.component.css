@@ -1,0 +1,254 @@
+/* Base Styles */
+.academic-portal {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  color: #333;
+}
+
+/* Form Styles */
+.portal-form {
+  background: #fff;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.form-field {
+  margin-bottom: 20px;
+}
+
+.form-field label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
+}
+
+.form-field input {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+/* Subjects Section */
+.subjects-section {
+  margin-bottom: 20px;
+}
+
+.subject-item {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.subject-item input {
+  flex: 1;
+  padding: 8px 12px;
+}
+
+/* Buttons */
+.add-btn, .remove-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-btn {
+  background-color: #176B87;
+  color: white;
+}
+
+.remove-btn {
+  background-color: #e74c3c;
+  color: white;
+  /* width: 30px; */
+}
+
+.submit-btn {
+  background-color: #176B87;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 4px;
+}
+
+/* Layout */
+.content-wrapper {
+  display: flex;
+  gap: 20px;
+}
+
+.academic-content {
+  flex: 2;
+  min-width: 0;
+}
+
+.attendance-column {
+  flex: 1;
+  min-width: 300px;
+  max-width: 350px;
+}
+
+/* Section Styles */
+.section-title {
+  color: #176B87;
+  margin: 0 0 15px 0;
+  font-weight: 600;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Academic Records */
+.records-section {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.records-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.records-table th {
+  background-color: #176B87;
+  color: white;
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.records-table td {
+  padding: 10px 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Student Performance */
+.performance-section {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.semester-card {
+  margin-bottom: 20px;
+}
+
+.gpa-badge {
+  background-color: #176B87;
+  color: white;
+  display: inline-block;
+  padding: 5px 15px;
+  border-radius: 20px;
+  margin-bottom: 15px;
+}
+
+.subject-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.subject-table th, .subject-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #eee;
+}
+
+/* Assignments */
+.assignments-section {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.assignment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.assignment-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+}
+
+.assignment-status {
+  color: #28a745;
+  font-weight: 500;
+}
+
+/* Attendance */
+.attendance-section {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.attendance-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.attendance-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.att-status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.present {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.absent {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.no-records {
+  text-align: center;
+  color: #999;
+  padding: 10px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .content-wrapper {
+    flex-direction: column;
+  }
+
+  .attendance-column {
+    max-width: 100%;
+  }
+}

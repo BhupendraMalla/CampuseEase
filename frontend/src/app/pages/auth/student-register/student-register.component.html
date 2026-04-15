@@ -1,0 +1,124 @@
+<div class="register-wrapper">
+  <div class="background-image"></div>
+
+  <div class="glass-card">
+    <div class="text-center mb-4">
+      <a href="/" style="text-decoration: none;">
+        <h1 class="fw-bold text-white">CampusEase</h1>
+        <p class="text-white-50">Streamline Your College Experience</p>
+      </a>
+    </div>
+
+    <form [formGroup]="studentForm" (ngSubmit)="onSubmit()">
+      <label class="text-white">Name <span class="text-danger">*</span></label>
+      <div class="mb-3">
+        <input 
+          type="text" 
+          formControlName="name" 
+          class="form-control" 
+          placeholder="Full Name" 
+          required 
+          [disabled]="isLoading"
+        />
+        <div *ngIf="studentForm.get('name')?.touched && studentForm.get('name')?.invalid" class="text-danger small mt-1">
+          Name is required.
+        </div>
+      </div>
+
+      <label class="text-white">Email <span class="text-danger">*</span></label>
+      <div class="mb-3">
+        <input 
+          type="email" 
+          formControlName="email" 
+          class="form-control" 
+          placeholder="Email address" 
+          required 
+          [disabled]="isLoading"
+        />
+        <div *ngIf="studentForm.get('email')?.touched && studentForm.get('email')?.invalid" class="text-danger small mt-1">
+          Valid email is required.
+        </div>
+      </div>
+
+      <label class="text-white">Roll Number <span class="text-danger">*</span></label>
+      <div class="mb-3">
+        <input 
+          type="text" 
+          formControlName="rollno" 
+          class="form-control" 
+          placeholder="Roll Number" 
+          required 
+          [disabled]="isLoading"
+        />
+        <div *ngIf="studentForm.get('rollno')?.touched && studentForm.get('rollno')?.invalid" class="text-danger small mt-1">
+          Valid roll number is required.
+        </div>
+      </div>
+
+      <label class="text-white">Address <span class="text-danger">*</span></label>
+      <div class="mb-3">
+        <input 
+          type="text" 
+          formControlName="address" 
+          class="form-control" 
+          placeholder="Address" 
+          required 
+          [disabled]="isLoading"
+        />
+        <div *ngIf="studentForm.get('address')?.touched && studentForm.get('address')?.invalid" class="text-danger small mt-1">
+          Address is required.
+        </div>
+      </div>
+
+      <label class="text-white">Password <span class="text-danger">*</span></label>
+      <div class="mb-3">
+        <input 
+          type="password" 
+          formControlName="password" 
+          class="form-control" 
+          placeholder="Password (min 6 characters)" 
+          required 
+          [disabled]="isLoading"
+        />
+        <div *ngIf="studentForm.get('password')?.touched && studentForm.get('password')?.invalid" class="text-danger small mt-1">
+          Password must be at least 6 characters.
+        </div>
+      </div>
+
+      <label class="text-white">Confirm Password <span class="text-danger">*</span></label>
+      <div class="mb-3">
+        <input 
+          type="password" 
+          formControlName="confirmPassword" 
+          class="form-control" 
+          placeholder="Confirm Password" 
+          required 
+          [disabled]="isLoading"
+        />
+        <div *ngIf="studentForm.get('confirmPassword')?.touched && studentForm.get('confirmPassword')?.invalid" class="text-danger small mt-1">
+          Confirm password is required.
+        </div>
+      </div>
+
+      <button 
+        type="submit" 
+        class="btn btn-success w-100 py-2"
+        [disabled]="isLoading"
+      >
+        {{ isLoading ? 'Creating Account...' : 'Sign Up' }}
+      </button>
+
+      <div class="text-white mt-3 text-center">
+        Already a member?
+        <a href="/login" class="text-info" style="text-decoration: none;">Click here</a> to login.
+      </div>
+
+      <div class="alert mt-3" [ngClass]="{ 'alert-success': !isError, 'alert-danger': isError }" *ngIf="message">
+        {{ message }}
+      </div>
+
+      <hr class="bg-light" />
+      <p class="text-center text-white-50 mb-0">&copy; CampusEase All Rights Reserved 2025</p>
+    </form>
+  </div>
+</div>
