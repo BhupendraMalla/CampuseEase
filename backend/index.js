@@ -19,8 +19,23 @@ const io = new Server(server, {
 const setupSocket = require('./socketServer');
 setupSocket(io);
 
-// connect to database
-connectdb();
+// Initialize app with database connection
+const initializeApp = async () => {
+  try {
+    await connectdb();
+    console.log('✅ Database connected, starting server...');
+    
+    // start the server
+    server.listen(process.env.PORT || 3200, () => {
+        console.log(`Server is running on port ${process.env.PORT || 3200}`);
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error.message);
+    process.exit(1);
+  }
+};
+
+initializeApp();
 
 // import routes
 const userRoutes= require('./routes/userRoute')
@@ -98,8 +113,3 @@ app.use(Face);
 
 // Serve static files from the "uploads" directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// start the server
-server.listen(process.env.PORT || 3200, () => {
-    console.log(`Server is running on port ${process.env.PORT || 3200}`);
-});

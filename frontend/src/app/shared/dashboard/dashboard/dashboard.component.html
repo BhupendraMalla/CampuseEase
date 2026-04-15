@@ -12,9 +12,8 @@
   <div id="page-container" class="page-container" *ngIf="showUserProfileData">
     <!-- === TOP NAVBAR === -->
     <nav class="navbar navbar-expand-lg navbar-dark campus-navbar fixed-top">
-      <div class="container-fluid">
-        <a class="navbar-brand fw-bold campus-brand" href="/dashboard">CampusEase
-        </a>
+      <div class="container-fluid px-2">
+        <a class="navbar-brand fw-bold campus-brand" href="/dashboard">CampusEase</a>
 
         <ul class="navbar-nav ms-auto">
           <li class="nav-item dropdown">
@@ -29,18 +28,23 @@
                 class="rounded-circle campus-user-avatar"
                 alt="User"
               />
-              <span class="ms-2" style="color: white;">{{ showUserProfileData.name }}</span>
+              <span class="ms-2 d-none d-md-inline" style="color: white;">{{ showUserProfileData.name }}</span>
             </a>
             <ul class="dropdown-menu dropdown-menu-end campus-dropdown">
               <li>
                 <a class="dropdown-item" (click)="showSection('profile')">
-                  <i class="fas fa-user me-1"></i><span>Profile</span>
+                  <i class="fas fa-user me-2"></i><span>Profile</span>
+                </a>
+              </li>
+              <li *ngIf="showUserProfileData?.isVerified">
+                <a class="dropdown-item" (click)="showSection('change-password')">
+                  <i class="fas fa-key me-2"></i><span>Change Password</span>
                 </a>
               </li>
               <li><hr class="dropdown-divider" /></li>
               <li>
                 <a class="dropdown-item text-danger" (click)="LogoutButton()">
-                  <i class="fas fa-sign-out-alt me-1"></i><span>Logout</span>
+                  <i class="fas fa-sign-out-alt me-2"></i><span>Logout</span>
                 </a>
               </li>
             </ul>
@@ -79,6 +83,12 @@
                 <a class="nav-link" (click)="showSection('profile')">
                   <i class="fas fa-user"></i>
                   <span>Profile</span>
+                </a>
+              </li>
+              <li class="nav-item" [class.active]="currentSection === 'change-password'" *ngIf="showUserProfileData?.isVerified">
+                <a class="nav-link" (click)="showSection('change-password')">
+                  <i class="fas fa-key"></i>
+                  <span>Change Password</span>
                 </a>
               </li>
               <li class="nav-item" [class.active]="currentSection === 'chat'">
@@ -313,6 +323,12 @@
                   <span>Profile</span>
                 </a>
               </li>
+              <li class="nav-item" [class.active]="currentSection === 'change-password'" *ngIf="showUserProfileData?.isVerified">
+                <a class="nav-link" (click)="showSection('change-password')">
+                  <i class="fas fa-key"></i>
+                  <span>Change Password</span>
+                </a>
+              </li>
               <li class="nav-item" [class.active]="currentSection === 'join-club'">
                 <a class="nav-link" (click)="showSection('join-club')">
                   <i class="fas fa-comments"></i>
@@ -340,6 +356,12 @@
                 <a class="nav-link" (click)="showSection('profile')">
                   <i class="fas fa-user"></i>
                   <span>Profile</span>
+                </a>
+              </li>
+              <li class="nav-item" [class.active]="currentSection === 'change-password'" *ngIf="showUserProfileData?.isVerified">
+                <a class="nav-link" (click)="showSection('change-password')">
+                  <i class="fas fa-key"></i>
+                  <span>Change Password</span>
                 </a>
               </li>
               <li class="nav-item" [class.active]="currentSection === 'chat'">
@@ -474,6 +496,9 @@
             <app-id-card></app-id-card>
           </div>
           <div *ngIf="currentSection === 'profile'">
+            <app-profile></app-profile>
+          </div>
+          <div *ngIf="currentSection === 'change-password'">
             <app-profile></app-profile>
           </div>
           <div *ngIf="currentSection === 'sponsorship'">

@@ -26,9 +26,12 @@
       <button type="submit" class="btn btn-success w-100 py-2" (click)="loginButton()">Login</button>
       </form>
 
-        <div class="text-end mb-3">
+        <div class="d-flex justify-content-between mb-3">
           <a [routerLink]="['/reset-password']" class="text-info" style="text-decoration: none;">
            Forgot Password?
+          </a>
+          <a [routerLink]="['/reset-password']" [queryParams]="{mode: 'change'}" class="text-info" style="text-decoration: none;">
+           Change Password?
           </a>
           </div>
 
