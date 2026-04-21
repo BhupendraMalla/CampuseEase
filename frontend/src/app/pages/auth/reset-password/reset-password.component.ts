@@ -38,9 +38,17 @@ function passwordMatchValidator(): ValidatorFn {
 })
 export class ResetPasswordComponent implements OnInit {
   emailForm!: FormGroup;
+  changePasswordForm!: FormGroup;
   passwordForm!: FormGroup;
   token: string | null = null;
   isResetMode = false;
+  isChangeMode = false;
+  isChangingPassword = false;
+  
+  // Password visibility toggles
+  showCurrentPassword = false;
+  showNewPassword = false;
+  showConfirmPassword = false;
 
   constructor(
     private fb: FormBuilder,
@@ -52,10 +60,17 @@ export class ResetPasswordComponent implements OnInit {
   ngOnInit(): void {
     // Extract token from query string
     this.token = this.route.snapshot.queryParamMap.get('token');
+    const mode = this.route.snapshot.queryParamMap.get('mode');
     this.isResetMode = !!this.token;
+    this.isChangeMode = mode === 'change';
 
     this.emailForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]]
+    });
+
+    this.changePasswordForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      currentPassword: ['', Validators.required]
     });
 
     this.passwordForm = this.fb.group(
@@ -65,6 +80,16 @@ export class ResetPasswordComponent implements OnInit {
       },
       { validators: passwordMatchValidator() }
     );
+  }
+
+  togglePasswordVisibility(field: string): void {
+    if (field === 'current') {
+      this.showCurrentPassword = !this.showCurrentPassword;
+    } else if (field === 'new') {
+      this.showNewPassword = !this.showNewPassword;
+    } else if (field === 'confirm') {
+      this.showConfirmPassword = !this.showConfirmPassword;
+    }
   }
 
   requestResetLink(): void {
@@ -98,6 +123,44 @@ export class ResetPasswordComponent implements OnInit {
       },
       error: (err) => {
         alertify.error(err.error?.message || 'Password reset failed');
+      }
+    });
+  }
+
+  verifyCredentials(): void {
+    if (this.changePasswordForm.invalid) return;
+
+    const { email, currentPassword } = this.changePasswordForm.value;
+
+    this.http.post<any>('http://localhost:3200/verify-credentials', { email, password: currentPassword }).subscribe({
+      next: (res) => {
+        alertify.success('Credentials verified. Enter new password.');
+        this.isChangingPassword = true;
+      },
+      error: (err) => {
+        alertify.error(err.error?.message || 'Invalid email or password');
+      }
+    });
+  }
+
+  changePassword(): void {
+    if (this.passwordForm.invalid || this.changePasswordForm.invalid) return;
+
+    const { email, currentPassword } = this.changePasswordForm.value;
+    const { newPassword, confirmPassword } = this.passwordForm.value;
+
+    this.http.post<any>('http://localhost:3200/change-password', { 
+      email, 
+      currentPassword, 
+      newPassword, 
+      confirmPassword 
+    }).subscribe({
+      next: (res) => {
+        alertify.success('Password changed successfully');
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        alertify.error(err.error?.message || 'Failed to change password');
       }
     });
   }

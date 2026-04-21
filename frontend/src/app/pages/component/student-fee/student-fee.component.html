@@ -104,8 +104,8 @@
           <td>{{ fee.method }}</td>
           <td>
             <span [ngClass]="{
-              'text-success': fee.status === 'Approved',
-              'text-warning': fee.status === 'Pending',
+              'text-success': fee.status === 'Paid',
+              'text-warning': fee.status === 'Pending' || fee.status === 'Unpaid',
               'text-danger': fee.status === 'Rejected'
             }">{{ fee.status }}</span>
           </td>

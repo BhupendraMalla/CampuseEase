@@ -149,8 +149,11 @@ export class StudentFeeComponent implements OnInit {
     };
     if (paymentPayload) payload.paymentPayload = paymentPayload;
 
+    console.log('Submitting fee payment:', payload);
+
     this.http.post(`${environment.api_url}payFee`, payload, { headers }).subscribe(
       (res: any) => {
+        console.log('Fee payment response:', res);
         alertify.success(res.message || 'Fee paid successfully!');
         this.feeForm.reset({ method: 'Khalti' });
         this.showQRCode = false;
@@ -158,6 +161,7 @@ export class StudentFeeComponent implements OnInit {
         this.fetchPaymentHistory();
       },
       (err) => {
+        console.error('Fee payment error:', err);
         alertify.error(err.error?.message || 'Failed to process fee payment');
       }
     );

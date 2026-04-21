@@ -15,6 +15,7 @@ import * as alertify from 'alertifyjs';
 })
 export class LoginPageComponent implements OnInit {
   loginForm!: FormGroup;
+  showPassword = false;
 
   constructor(
     private userSignIn: UserAuthService,
@@ -36,6 +37,10 @@ export class LoginPageComponent implements OnInit {
     if (userToken) {
       this.router.navigate(['/dashboard']);
     }
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 
  loginButton(): void {
