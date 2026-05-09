@@ -11,6 +11,7 @@ const Course = require('../models/enrollmentModel');
 const Attendance = require('../models/otpModel');
 const Club = require('../models/addClubModel');
 const FaceAttendance = require('../models/faceModel');
+const { verifyRole, canPerformAction } = require('../middleware/authRoles');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -129,10 +130,16 @@ router.post('/signin', async (req, res) => {
             return res.json({ message: 'password is incorrect' });
         }
         const userRole = userData.role;
-        // const token = jwt.sign({ email: userData.email }, 'process.env.SECRET_KEY');
-        const token = jwt.sign({ email: userData.email, userId: userData._id , name: userData.name , rollno: userData.rollno , role: userData.role }, process.env.SECRET_KEY);
+        const token = jwt.sign({ 
+          email: userData.email, 
+          userId: userData._id , 
+          name: userData.name , 
+          rollno: userData.rollno , 
+          role: userData.role,
+          department: userData.department 
+        }, process.env.SECRET_KEY);
 
-        res.json({ message: 'Login Sucessfull', role: userRole, token: token });
+        res.json({ message: 'Login Sucessfull', role: userRole, token: token, department: userData.department });
     }
     catch (error) {
       res.status(500).json({ message: 'something went wrong', error: error.stack });
@@ -190,9 +197,48 @@ router.put('/userdata/:id', verifyToken, upload.single("photo"), async (req, res
   }
 });
 
-// update user password
-// This route allows users to update their password after verifying their old password
-router.put('/password/:id', verifyToken, async (req, res) => {
+// update user data
+router.put('/updateUser/:id', verifyToken, async (req, res) => {
+  try {
+    const { name, email, address, role, department } = req.body;
+    const userToUpdate = await userRegister.findById(req.params.id);
+
+    if (!userToUpdate) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Check authorization - users can only update their own data unless they're admin
+    if (req.user.userId?.toString() !== req.params.id && req.user.id?.toString() !== req.params.id) {
+      if (!['super-admin', 'admin', 'principal', 'coordinator', 'director'].includes(req.user.role)) {
+        return res.status(403).json({ message: 'You can only update your own user data' });
+      }
+
+      // If changing role, check if current user can create that role
+      if (role && role !== userToUpdate.role) {
+        if (!canPerformAction(req.user.role, 'canCreateUsers', role)) {
+          return res.status(403).json({ message: `You cannot assign role ${role}` });
+        }
+      }
+    }
+
+    const updateData = {};
+    if (name) updateData.name = name;
+    if (email) updateData.email = email;
+    if (address) updateData.address = address;
+    if (role) updateData.role = role;
+    if (department) updateData.department = department;
+
+    const updatedUser = await userRegister.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    );
+
+    res.json({ message: 'User updated successfully', user: updatedUser });
+  } catch (error) {
+    res.status(500).json({ message: 'Something went wrong', error: error.message });
+  }
+});
   try {
     const { oldpassword, password, confirmPassword } = req.body;
 
@@ -231,13 +277,27 @@ router.put('/password/:id', verifyToken, async (req, res) => {
 
 // delete user
 // This route allows an admin to delete a user by their ID
-router.delete('/user/:id', verifyToken,async (req, res) => {
+router.delete('/user/:id', verifyToken, verifyRole(['super-admin', 'admin', 'principal', 'coordinator', 'director']), async (req, res) => {
   try {
-      const user = await userRegister.findByIdAndDelete(req.params.id);
-      if (!user) {
+      const userToDelete = await userRegister.findById(req.params.id);
+      if (!userToDelete) {
           return res.status(404).json({ message: 'User not found' });
       }
-      res.json({ message: 'User deleted' ,user});
+
+      // Check if the current user can delete this user's role
+      if (!canPerformAction(req.user.role, 'canDeleteUsers', userToDelete.role)) {
+        return res.status(403).json({ message: `Your role (${req.user.role}) cannot delete users with role ${userToDelete.role}` });
+      }
+
+      // Coordinator/Director can only delete users in their department
+      if (req.user.role === 'coordinator' || req.user.role === 'director') {
+        if (userToDelete.department !== (req.user.department || 'academic')) {
+          return res.status(403).json({ message: 'You can only delete users from your department' });
+        }
+      }
+
+      const user = await userRegister.findByIdAndDelete(req.params.id);
+      res.json({ message: 'User deleted successfully', user });
   } catch (err) {
       res.status(500).json({ message: err.message });
   }

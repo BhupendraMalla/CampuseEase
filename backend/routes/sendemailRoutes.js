@@ -6,6 +6,7 @@ const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const verifyToken= require('../middleware');
 const bcrypt=require('bcrypt');
+const { verifyRole, canPerformAction } = require('../middleware/authRoles');
 
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
@@ -66,10 +67,10 @@ function sendVerificationEmail(user) {
     return transporter.sendMail(mailOptions);
 }
 
-// User Registration Route
-router.post('/signupUser', verifyToken,  async (req, res) => {
+// User Registration Route (Create user by admin/authorized personnel)
+router.post('/signupUser', verifyToken, verifyRole(['super-admin', 'admin', 'principal', 'coordinator', 'director']), async (req, res) => {
     try {
-      const { name, email, rollno, address, password, confirmPassword, role } = req.body;
+      const { name, email, rollno, address, password, confirmPassword, role, department } = req.body;
   
       // Validate required fields
       if (!name || !email || !address || !password || !confirmPassword || !role) {
@@ -78,6 +79,17 @@ router.post('/signupUser', verifyToken,  async (req, res) => {
 
       if (password !== confirmPassword) {
         return res.status(400).json({ message: 'Passwords do not match' });
+      }
+
+      // Check if user can create this role
+      if (!canPerformAction(req.user.role, 'canCreateUsers', role)) {
+        return res.status(403).json({ message: `Your role (${req.user.role}) cannot create users with role ${role}` });
+      }
+
+      // Check if department is specified for department-specific roles
+      const departmentSpecificRoles = ['hod', 'director', 'coordinator', 'it-officer', 'graphic-designer', 'receptionist', 'operations-officer', 'finance-officer'];
+      if (departmentSpecificRoles.includes(role) && !department) {
+        return res.status(400).json({ message: `Department is required for ${role} role` });
       }
   
       const currentDate = new Date();
@@ -99,6 +111,7 @@ router.post('/signupUser', verifyToken,  async (req, res) => {
           password:hashedPassword,
           confirmPassword:hashedconfirmPassword,
           role,
+          department: department || 'general',
           registereddate: formattedDate,
           isVerified: false,
           isPasswordSet: false
@@ -124,11 +137,11 @@ router.post('/signupUser', verifyToken,  async (req, res) => {
           // Continue anyway - user is created
         }
   
-        return res.status(201).json(newUser);
+        return res.status(201).json({ message: 'User created successfully', user: newUser });
       }
   
       if (user.isVerified) {
-        return res.status(409).json({ message: 'Already registered.', user });
+        return res.status(409).json({ message: 'User already registered.', user });
       } else {
         const updateData = {
           name,
@@ -137,6 +150,7 @@ router.post('/signupUser', verifyToken,  async (req, res) => {
           password:hashedPassword,
           confirmPassword,
           role,
+          department: department || 'general',
           registereddate: formattedDate,
           isVerified: false
         };
@@ -163,7 +177,7 @@ router.post('/signupUser', verifyToken,  async (req, res) => {
           // Continue anyway - user is updated
         }
         
-        return res.status(200).json(newUser);
+        return res.status(200).json({ message: 'User updated successfully', user: newUser });
       }
     } catch (error) {
       console.error('SignupUser error:', error);

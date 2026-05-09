@@ -20,6 +20,7 @@ export class UserManagementComponent implements OnInit {
   userForm!: FormGroup;
   isEditMode: boolean = false;
   selectedUserId: string | null = null;
+  showDepartmentField: boolean = false;
 
   showTeacherData: any[] = [];
   showTeacherCount: number = 0;
@@ -28,6 +29,9 @@ export class UserManagementComponent implements OnInit {
   showStudentCount: number = 0;
   showSecretaryData: any[] = [];
   showSecretaryCount: number = 0;
+
+  // Roles that require department selection
+  departmentRequiredRoles = ['hod', 'director', 'coordinator', 'it-officer', 'graphic-designer', 'receptionist', 'operations-officer', 'finance-officer'];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -51,8 +55,22 @@ export class UserManagementComponent implements OnInit {
       address: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required],
-      role: ['', Validators.required]
+      role: ['', Validators.required],
+      department: ['']
     });
+  }
+
+  onRoleChange() {
+    const selectedRole = this.userForm.get('role')?.value;
+    this.showDepartmentField = this.departmentRequiredRoles.includes(selectedRole);
+    
+    if (this.showDepartmentField) {
+      this.userForm.get('department')?.setValidators([Validators.required]);
+    } else {
+      this.userForm.get('department')?.clearValidators();
+    }
+    
+    this.userForm.get('department')?.updateValueAndValidity();
   }
 
   loadAllData() {

@@ -111,14 +111,46 @@
             <!-- Role Select -->
             <div class="col-md-6">
               <label for="role" class="form-label">Role</label>
-              <select id="role" class="form-select" formControlName="role">
+              <select id="role" class="form-select" formControlName="role" (change)="onRoleChange()">
                 <option value="" disabled selected>Select Role</option>
                 <option value="student">Student</option>
                 <option value="faculty">Teacher</option>
                 <option value="secretary">Secretary</option>
+                <option disabled>--- Administration ---</option>
+                <option value="it-officer">IT Officer</option>
+                <option value="graphic-designer">Graphic Designer</option>
+                <option value="receptionist">Receptionist</option>
+                <option disabled>--- Academic ---</option>
+                <option value="principal">Principal</option>
+                <option value="coordinator">Coordinator</option>
+                <option value="hod">HOD (Head of Department)</option>
+                <option value="director">Director</option>
+                <option disabled>--- Operations ---</option>
+                <option value="operations-officer">Operations Officer</option>
+                <option disabled>--- Finance ---</option>
+                <option value="finance-officer">Finance Officer</option>
+                <option disabled>--- Admin ---</option>
+                <option value="admin">Admin</option>
+                <option value="super-admin">Super Admin</option>
               </select>
               <div *ngIf="userForm.get('role')?.invalid && (userForm.get('role')?.dirty || userForm.get('role')?.touched)" class="invalid-feedback">
                 <span *ngIf="userForm.get('role')?.errors?.['required']">Role is required</span>
+              </div>
+            </div>
+
+            <!-- Department Select (for department-specific roles) -->
+            <div class="col-md-6" *ngIf="showDepartmentField">
+              <label for="department" class="form-label">Department</label>
+              <select id="department" class="form-select" formControlName="department">
+                <option value="" disabled selected>Select Department</option>
+                <option value="academic">Academic</option>
+                <option value="administration">Administration</option>
+                <option value="operations">Operations</option>
+                <option value="finance">Finance</option>
+                <option value="general">General</option>
+              </select>
+              <div *ngIf="userForm.get('department')?.invalid && (userForm.get('department')?.dirty || userForm.get('department')?.touched)" class="invalid-feedback">
+                <span *ngIf="userForm.get('department')?.errors?.['required']">Department is required for this role</span>
               </div>
             </div>
 

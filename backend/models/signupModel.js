@@ -10,13 +10,39 @@ const RegisterSchema = new mongoose.Schema({
   confirmPassword: { type: String },
   role: {
     type: String,
-    enum: ['student', 'faculty', 'secretary', 'admin'],
+    enum: [
+      'student', 
+      'faculty', 
+      'secretary', 
+      'admin',
+      'super-admin',
+      'principal',
+      'coordinator',
+      'hod',
+      'director',
+      'it-officer',
+      'graphic-designer',
+      'receptionist',
+      'operations-officer',
+      'finance-officer'
+    ],
     default: 'student'
   },
+  department: {
+    type: String,
+    enum: [
+      'academic',
+      'administration',
+      'operations',
+      'finance',
+      'general'
+    ],
+    default: 'general'
+  },
   isPasswordSet: {
-  type: Boolean,
-  default: false
-},
+    type: Boolean,
+    default: false
+  },
   registereddate: { type: String },
   isVerified: { type: Boolean, required: true }
 });
