@@ -74,9 +74,8 @@ router.get('/getEventbyemail', verifyToken, async (req, res) => {
 
         const events = await Event.find({ createdBy: email });
 
-        // Check if event is an empty array
         if (!events || events.length === 0) {
-            return res.status(404).json({ message: 'Events not found' });
+            return res.json({ Events: [] });
         }
 
         // Add user's name to each event record

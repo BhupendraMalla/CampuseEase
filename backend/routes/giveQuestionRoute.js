@@ -121,23 +121,18 @@ router.get('/getmodelquestiongivenbyemail', verifyToken, async (req, res) => {
     }
 
     const enrollment = await Enrollment.findOne({ "subjects.teacher": user.email });
-
-    if (!enrollment) {
-      return res.status(404).json({ message: 'Enrollment not found' });
-    }
-
-    const subjectsTaught = enrollment.subjects
-      .filter(subject => subject.teacher === user.email)
-      .map(subject => subject.name);
+    const subjectsTaught = enrollment
+      ? enrollment.subjects.filter(s => s.teacher === user.email).map(s => s.name)
+      : [];
 
     if (subjectsTaught.length === 0) {
-      return res.status(404).json({ message: 'No subjects found for this teacher' });
+      return res.json({ Model_Question: [] });
     }
 
     const question = await ModelQuestion.find({ subject: { $in: subjectsTaught } });
 
     if (!question || question.length === 0) {
-      return res.status(404).json({ message: 'No model question found' });
+      return res.json({ Model_Question: [] });
     }
 
     res.json({ Model_Question: question });
@@ -154,17 +149,15 @@ router.get('/getQuestionsByEnrolledSubject', verifyToken, async (req, res) => {
     const { email } = req.user;
 
     const enrollment = await UserSubjects.findOne({ userEmail: email });
-
-    if (!enrollment) {
-      return res.status(404).json({ message: 'Enrollment not found for the user' });
+    const enrolledSubjects = enrollment ? enrollment.subjects.map(s => s.name) : [];
+    if (enrolledSubjects.length === 0) {
+      return res.json({ Model_Questions: [] });
     }
-
-    const enrolledSubjects = enrollment.subjects.map(subject => subject.name);
 
     const questions = await ModelQuestion.find({ subject: { $in: enrolledSubjects } });
 
     if (!questions || questions.length === 0) {
-      return res.status(404).json({ message: 'No questions found for enrolled subjects' });
+      return res.json({ Model_Questions: [] });
     }
 
     res.json({ Model_Questions: questions });

@@ -57,9 +57,8 @@ router.get('/getAcademicRecordbyemail', verifyToken, async (req, res) => {
         }
         
         const academicRecords = await AcademicRecord.find({ Name: user.name });
-         // Check if AcademicRecord is an empty array
         if (!academicRecords || academicRecords.length === 0) {
-          return res.status(404).json({ message: 'No AcademicRecords found' });
+          return res.json({ AcademicRecords: [] });
         }
         res.json({ AcademicRecords: academicRecords });
        

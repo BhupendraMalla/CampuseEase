@@ -182,7 +182,7 @@ router.put('/userdata/:id', verifyToken, upload.single("photo"), async (req, res
     }
 
     if (file) {
-      updateData.photo = `http://localhost:3200/uploads/${file.filename}`;
+      updateData.photo = `${req.protocol}://${req.get('host')}/uploads/${file.filename}`;
     }
 
     const updatedUser = await userRegister.findByIdAndUpdate(
@@ -239,39 +239,45 @@ router.put('/updateUser/:id', verifyToken, async (req, res) => {
     res.status(500).json({ message: 'Something went wrong', error: error.message });
   }
 });
+
+// change password (authenticated user changes own password)
+router.put('/password/:id', verifyToken, async (req, res) => {
   try {
     const { oldpassword, password, confirmPassword } = req.body;
 
-    // Fetch user by ID
+    if (!oldpassword || !password || !confirmPassword) {
+      return res.status(400).json({ error: 'All password fields are required' });
+    }
+
+    if (req.user.userId?.toString() !== req.params.id) {
+      return res.status(403).json({ error: 'You can only change your own password' });
+    }
+
     const user = await userRegister.findById(req.params.id);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Compare old password with hashed password in DB
     const isMatch = await bcrypt.compare(oldpassword, user.password);
     if (!isMatch) {
       return res.status(400).json({ error: 'Old password is incorrect' });
     }
 
-    // Check if new passwords match
     if (password !== confirmPassword) {
       return res.status(400).json({ error: 'New password did not match' });
     }
 
-    // Hash new password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Update password in DB
-    const updatedUser = await userRegister.findByIdAndUpdate(
+    await userRegister.findByIdAndUpdate(
       req.params.id,
-      { password: hashedPassword, confirmPassword: hashedPassword }, // optional to store confirmPassword
+      { password: hashedPassword, confirmPassword: hashedPassword, isPasswordSet: true },
       { new: true }
     );
 
-    res.json({ message: 'Password updated successfully', userdata: updatedUser });
+    res.json({ message: 'Password updated successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Something went wrong', error });
+    res.status(500).json({ message: 'Something went wrong', error: error.message });
   }
 });
 
@@ -425,18 +431,6 @@ router.get('/users', async (req, res) => {
     res.json({ users, count: users.length });
   } catch (error) {
     res.status(500).json({ message: 'Failed to get users', error: error.message });
-  }
-});
-
-// update the user
-router.put('/updateUser/:id', verifyToken, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const updatedData = req.body;
-    const updatedUser = await userRegister.findByIdAndUpdate(id, updatedData, { new: true });
-    res.json({ message: 'User updated successfully', updatedUser });
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to update user', error: error.message });
   }
 });
 

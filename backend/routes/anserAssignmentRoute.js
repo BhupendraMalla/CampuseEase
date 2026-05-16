@@ -135,9 +135,9 @@ router.post('/postAnswerAssignment', verifyToken, upload.single("assignmentFile"
       }
   
       const assignments = await answerAssignment.find({ rollno: user.rollno }).lean().exec();
-  
+
       if (!assignments || assignments.length === 0) {
-        return res.status(404).json({ message: 'No assignments found' });
+        return res.json({ Assignment: [] });
       }
   
       // Fetch corresponding give assignments and calculate status
@@ -175,28 +175,20 @@ router.post('/postAnswerAssignment', verifyToken, upload.single("assignmentFile"
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-         // Find the enrollment details based on the teacher's name
-         const enrollment= await Enrollment.findOne({ "subjects.teacher": user.email });
-        
-         if (!enrollment) {
-             return res.status(404).json({ message: 'Enrollment not found' });
-         }
-         // Extract the subjects taught by this teacher
-         const subjectsTaught = enrollment.subjects
-         .filter(subject => subject.teacher === user.email)
-         .map(subject => subject.name);
+        const enrollment = await Enrollment.findOne({ "subjects.teacher": user.email });
+        const subjectsTaught = enrollment
+          ? enrollment.subjects.filter(s => s.teacher === user.email).map(s => s.name)
+          : [];
 
         if (subjectsTaught.length === 0) {
-        return res.status(404).json({ message: 'No subjects found for this teacher' });
-          }                               
+          return res.json({ Assignment: [] });
+        }
 
         // Find assignments for the subjects taught by this teacher
         const assignment = await answerAssignment.find({ subject: { $in: subjectsTaught } });
 
-        
-         // Check if assignment is an empty array
         if (!assignment || assignment.length === 0) {
-          return res.status(404).json({ message: 'No assignment found' });
+          return res.json({ Assignment: [] });
         }
         res.json({ Assignment: assignment });
        

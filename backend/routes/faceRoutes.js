@@ -323,7 +323,7 @@ router.get('/getFaceAttendanceForMySubjects', verifyToken, async (req, res) => {
     });
 
     if (!facultyEnrollments.length) {
-      return res.status(404).json({ message: 'No subjects found for this faculty' });
+      return res.json([]);
     }
 
     // Extract all subjects taught by this faculty
@@ -333,7 +333,7 @@ router.get('/getFaceAttendanceForMySubjects', verifyToken, async (req, res) => {
       .map(subject => subject.name);
 
     if (taughtSubjects.length === 0) {
-      return res.status(404).json({ message: 'No subjects found for this faculty' });
+      return res.json([]);
     }
 
     // Find students enrolled in these subjects
@@ -352,7 +352,7 @@ router.get('/getFaceAttendanceForMySubjects', verifyToken, async (req, res) => {
     const studentRollnos = students.map(s => s.rollno).filter(Boolean);
 
     if (studentRollnos.length === 0) {
-      return res.status(404).json({ message: 'No students found enrolled in your subjects' });
+      return res.json([]);
     }
 
     // Fetch attendance records for these rollnos and subjects

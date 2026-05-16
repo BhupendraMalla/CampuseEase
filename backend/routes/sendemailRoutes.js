@@ -103,82 +103,40 @@ router.post('/signupUser', verifyToken, verifyRole(['super-admin', 'admin', 'pri
       const hashedconfirmPassword = await bcrypt.hash(confirmPassword, 10);
       const user = await userRegister.findOne({ email });
   
+      // Admin-created accounts are trusted: provisioned verified with usable password.
+      // Email is best-effort (welcome notification only) and never blocks creation.
+      const baseData = {
+        name,
+        email,
+        address,
+        password: hashedPassword,
+        confirmPassword: hashedconfirmPassword,
+        role,
+        department: department || 'general',
+        registereddate: formattedDate,
+        isVerified: true,
+        isPasswordSet: true
+      };
+      if (rollno) baseData.rollno = rollno;
+
+      let savedUser;
       if (!user) {
-        const userData = {
-          name,
-          email,
-          address,
-          password:hashedPassword,
-          confirmPassword:hashedconfirmPassword,
-          role,
-          department: department || 'general',
-          registereddate: formattedDate,
-          isVerified: false,
-          isPasswordSet: false
-        };
-        
-        // Only include rollno if provided (to avoid null conflicts with unique sparse index)
-        if (rollno) {
-          userData.rollno = rollno;
-        }
-        
-        const newUser = new userRegister(userData);
-  
-        await newUser.save();
-        
-        // Try to send verification email, but don't fail the request if it fails
-        try {
-          await sendVerificationEmail({
-            email: newUser.email,
-            password: plainPassword
-          });
-        } catch (emailError) {
-          console.error('Email sending failed:', emailError.message);
-          // Continue anyway - user is created
-        }
-  
-        return res.status(201).json({ message: 'User created successfully', user: newUser });
-      }
-  
-      if (user.isVerified) {
+        savedUser = await new userRegister(baseData).save();
+      } else if (user.isVerified && user.isPasswordSet) {
         return res.status(409).json({ message: 'User already registered.', user });
       } else {
-        const updateData = {
-          name,
-          email,
-          address,
-          password:hashedPassword,
-          confirmPassword,
-          role,
-          department: department || 'general',
-          registereddate: formattedDate,
-          isVerified: false
-        };
-        
-        // Only include rollno if provided
-        if (rollno) {
-          updateData.rollno = rollno;
-        }
-        
-        const newUser = await userRegister.findOneAndUpdate(
-          { email },
-          updateData,
-          { new: true }
-        );
-  
-        // Try to send verification email, but don't fail the request if it fails
-        try {
-          await sendVerificationEmail({
-            email: newUser.email,
-            password: plainPassword
-          });
-        } catch (emailError) {
-          console.error('Email sending failed:', emailError.message);
-          // Continue anyway - user is updated
-        }
-        
-        return res.status(200).json({ message: 'User updated successfully', user: newUser });
+        savedUser = await userRegister.findOneAndUpdate({ email }, baseData, { new: true });
       }
+
+      if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+        sendVerificationEmail({ email: savedUser.email, password: plainPassword })
+          .catch(err => console.error('Welcome email failed (non-fatal):', err.message));
+      }
+
+      return res.status(user ? 200 : 201).json({
+        message: user ? 'User updated successfully' : 'User created successfully',
+        user: savedUser
+      });
     } catch (error) {
       console.error('SignupUser error:', error);
       return res.status(500).json({ message: 'Something went wrong', error: error.message });

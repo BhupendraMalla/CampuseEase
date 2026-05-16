@@ -60,8 +60,15 @@ router.get('/getjoinedclubbyemail', verifyToken, async (req, res) => {
 
         // Find the joinClub records for the user
         const joinClubs = await JoinClub.find({ joinedBy: user.email });
+
+        const classifiedClubs = {
+            Requested_Clubs: [],
+            Accepted_Clubs: [],
+            Rejected_Clubs: []
+        };
+
         if (!joinClubs || joinClubs.length === 0) {
-            return res.status(404).json({ message: 'Join club records not found' });
+            return res.json(classifiedClubs);
         }
 
         // Add user's name to each joinClub record
@@ -69,13 +76,6 @@ router.get('/getjoinedclubbyemail', verifyToken, async (req, res) => {
             ...joinClub._doc,
             joinedBy: user.name
         }));
-
-        // Classify join clubs by decision
-        const classifiedClubs = {
-            Requested_Clubs: [],
-            Accepted_Clubs: [],
-            Rejected_Clubs: []
-        };
 
         joinClubsWithName.forEach(joinClub => {
             if (joinClub.decision === 'Pending') {
@@ -105,20 +105,22 @@ router.get('/getjoinedclubbyclubname', verifyToken, async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        if (user.role !== 'secretary') {
-            return res.status(403).json({ message: 'Access Denied: Only club secretaries can access this data' });
-        }
+        const classifiedClubs = {
+            Requested_Clubs: [],
+            Accepted_Clubs: [],
+            Rejected_Clubs: []
+        };
 
         const club = await Club.findOne({ contactEmail: user.email });
 
         if (!club) {
-            return res.status(404).json({ message: 'Club not found or you do not have access to this club' });
+            return res.json(classifiedClubs);
         }
 
         const joinClubs = await JoinClub.find({ clubName: club.clubName });
 
         if (!joinClubs || joinClubs.length === 0) {
-            return res.status(404).json({ message: 'Join club record not found' });
+            return res.json(classifiedClubs);
         }
 
         // Fetch all student names concurrently
@@ -126,17 +128,9 @@ router.get('/getjoinedclubbyclubname', verifyToken, async (req, res) => {
             const student = await Signup.findOne({ email: joinClub.joinedBy });
             return {
                 ...joinClub._doc,
-               // joinedBy: student ? student.name : joinClub.joinedBy // Use email if student not found
-               joinedBy: student.name
+               joinedBy: student ? student.name : joinClub.joinedBy
             };
         }));
-
-        // Classify join clubs by decision
-        const classifiedClubs = {
-            Requested_Clubs: [],
-            Accepted_Clubs: [],
-            Rejected_Clubs: []
-        };
 
         joinClubsWithName.forEach(joinClub => {
             if (joinClub.decision === 'Pending') {

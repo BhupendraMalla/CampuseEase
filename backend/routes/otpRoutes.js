@@ -145,7 +145,7 @@ router.get('/getattendancebydate', verifyToken, async (req, res) => {
         const todayAttendance = await Student.find({ date: formattedDate });
 
         if (todayAttendance.length === 0) {
-            return res.status(404).send('There is no attendance for today!');
+            return res.status(200).json({ attendance: [] });
         }
         return res.status(200).json({ attendance: todayAttendance });
     } catch (error) {
@@ -160,7 +160,7 @@ router.get('/getattendancebyemail', verifyToken, async (req, res) => {
 
         const attendance = await Student.find({ email });
         if (attendance.length === 0) {
-            return res.status(200).send('No attendance for this user');
+            return res.status(200).json({ attendance: [] });
         }
 
         return res.status(200).json({ attendance });

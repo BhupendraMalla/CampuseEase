@@ -23,7 +23,7 @@
         <h3><i class="fas fa-book"></i> Enrolled Subjects</h3>
       </div>
       <div class="card-body">
-        <div *ngIf="enrollmentData.subjects && enrollmentData.subjects.length > 0; else noData">
+        <div *ngIf="enrollmentData?.subjects?.length; else noData">
           <div class="subjects-table-container">
             <table class="subjects-table">
               <thead>
@@ -75,8 +75,8 @@
       </div>
       <div class="modal-body">
         <div class="goal-form">
-          <form [formGroup]="completedSemesterForm">
-            <div class="subject-goal" *ngFor="let subject of enrollmentData.subjects">
+          <form *ngIf="completedSemesterForm" [formGroup]="completedSemesterForm">
+            <div class="subject-goal" *ngFor="let subject of enrollmentData?.subjects || []">
               <div class="subject-info">
                 <label>{{ subject.name }}</label>
                 <span class="subject-code">{{ subject.code }}</span>

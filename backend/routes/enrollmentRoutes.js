@@ -107,10 +107,7 @@ router.get('/enrollmentDatabyEmail',verifyToken, async (req, res) => {
   try {
     const userEmail = req.user.email;
     const subject = await UserSubjects.findOne({ userEmail: userEmail });
-    if (!subject) {
-      return res.status(404).json({ message: 'subject not found' });
-    }
-    res.json(subject);
+    res.json(subject || { userEmail, subjects: [] });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -140,28 +137,22 @@ router.get('/enrollmentDatabyEnrolledsubject', verifyToken, async (req, res) => 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-         // Find the enrollment details based on the teacher's name
-         const enrollment= await Enrollment.findOne({ "subjects.teacher": user.email });
-        
-         if (!enrollment) {
-             return res.status(404).json({ message: 'Enrollment not found' });
-         }
-         // Extract the subjects taught by this teacher
-         const subjectsTaught = enrollment.subjects
-         .filter(subject => subject.teacher === user.email)
-         .map(subject => subject.name);
+        const enrollment = await Enrollment.findOne({ "subjects.teacher": user.email });
+        const subjectsTaught = enrollment
+          ? enrollment.subjects.filter(s => s.teacher === user.email).map(s => s.name)
+          : [];
 
         if (subjectsTaught.length === 0) {
-          return res.status(404).json({ message: 'No subjects found for this teacher' });
-        } 
+          return res.status(200).json({ message: 'Enrolled students in are:', users: [] });
+        }
         const student = await UserSubjects.find({ "subjects.name": { $in: subjectsTaught } });
         // Extract user emails from the student records
     const studentEmails = student.map(students => students.userEmail);
 
     // Find details of all these students
     const users = await Signup.find({ email: { $in: studentEmails } }, 'name email rollno');
-        if(!users){
-          return res.status(404).json({ message: 'No students found for this teacher' });
+        if(!users || users.length === 0){
+          return res.status(200).json({message:'Enrolled students in are:',  users: []  });
         }
       return res.status(200).json({message:'Enrolled students in are:',  users  });
   } catch (error) {

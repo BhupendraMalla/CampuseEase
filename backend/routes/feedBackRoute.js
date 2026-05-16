@@ -55,7 +55,7 @@ router.get('/getFeedbackbyrole', verifyToken, async (req, res) => {
         const feedback = await FeedbackModel.find({ feedbackFor: User.email });
 
         if (!feedback || feedback.length === 0) {
-            return res.status(404).json({ message: 'Feedback not found' });
+            return res.json({ feedbackByName: [] });
         }
 
         const feedbackByName = await Promise.all(feedback.map(async fb => {

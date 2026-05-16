@@ -115,30 +115,22 @@ router.get('/getassignmentsgivenbyemail', verifyToken, async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-         // Find the enrollment details based on the teacher's name
-        const enrollment= await Enrollment.findOne({ "subjects.teacher": user.email });
-        
-        if (!enrollment) {
-            return res.status(404).json({ message: 'Enrollment not found' });
-        }
-        
-        // Extract the subjects taught by this teacher
-        const subjectsTaught = enrollment.subjects
-            .filter(subject => subject.teacher === user.email)
-            .map(subject => subject.name);
+        const enrollment = await Enrollment.findOne({ "subjects.teacher": user.email });
+        const subjectsTaught = enrollment
+            ? enrollment.subjects.filter(s => s.teacher === user.email).map(s => s.name)
+            : [];
 
         if (subjectsTaught.length === 0) {
-           return res.status(404).json({ message: 'No subjects found for this teacher' });
-           }                               
+            return res.json({ Assignments: [] });
+        }
 
         // Find assignments for the subjects taught by this teacher
         const assignment = await Assignment.find({ subject: { $in: subjectsTaught } });
 
-            // Check if assignment is an empty array
             if (!assignment || assignment.length === 0) {
-                return res.status(404).json({ message: 'No assignment found' });
+                return res.json({ Assignments: [] });
                }
-      
+
                 res.json({ Assignments: assignment });
 
     } catch (error) {
@@ -152,21 +144,17 @@ router.get('/getassignmentsgivenbyemail', verifyToken, async (req, res) => {
     try {
         const { email } = req.user;
 
-        // Find the enrollment details for the logged-in student
         const enrollment = await UserSubjects.findOne({ userEmail: email });
-
-        if (!enrollment) {
-            return res.status(404).json({ message: 'Enrollment not found for the user' });
+        const enrolledSubjects = enrollment ? enrollment.subjects.map(s => s.name) : [];
+        if (enrolledSubjects.length === 0) {
+            return res.json({ assignments: [] });
         }
-
-        // Extract the subjects the student is enrolled in
-        const enrolledSubjects = enrollment.subjects.map(subject => subject.name);
 
         // Find the assignments given by the teacher for the enrolled subjects
         const assignments = await Assignment.find({ subject: { $in: enrolledSubjects } });
 
         if (!assignments || assignments.length === 0) {
-            return res.status(404).json({ message: 'No assignments found for enrolled subjects' });
+            return res.json({ assignments: [] });
         }
 
         res.json({ assignments });

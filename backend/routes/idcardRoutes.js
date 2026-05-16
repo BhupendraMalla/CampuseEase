@@ -97,27 +97,25 @@ router.get('/idcard', verifyToken,async(req,res)=>{
     const { email, name, rollno } = req.user;
       const users = await Signup.findOne({email});
       if(!users){
-        return res.status(404).send('User not registered');
+        return res.status(404).json({ message: 'User not registered' });
       }
-      if (users.role === 'student') {
-        const user = await UserSubject.findOne({ userEmail: email });
-        if (!user) {
-          return res.status(404).send('User is not enrolled');
-        }
-        //console.log('User subjects:', user.subjects);
-        const subjectNames = user.subjects.map(subject => subject.name);
-        const subject = await Enrollment.findOne({ 'subjects.name': { $in: subjectNames } });
-        if (!subject) {
-          return res.status(404).send('Subject not found');
-        }
-        // Ensure the subjects match exactly
+      if (users.role !== 'student') {
+        return res.status(200).json({ message: 'ID card not applicable for this role', data: [] });
+      }
+      const user = await UserSubject.findOne({ userEmail: email });
+      if (!user) {
+        return res.status(200).json({ message: 'Enroll in a semester to request an ID card', data: [] });
+      }
+      const subjectNames = user.subjects.map(s => s.name);
+      const subject = await Enrollment.findOne({ 'subjects.name': { $in: subjectNames } });
+      if (!subject) {
+        return res.status(200).json({ message: 'No matching enrollment found', data: [] });
+      }
       const userSubjects = new Set(subjectNames);
-      const enrollmentSubjects = new Set(subject.subjects.map(subject => subject.name));
-
-      const isSubjectMatch = [...userSubjects].every(subject => enrollmentSubjects.has(subject));
-
+      const enrollmentSubjects = new Set(subject.subjects.map(s => s.name));
+      const isSubjectMatch = [...userSubjects].every(s => enrollmentSubjects.has(s));
       if (!isSubjectMatch) {
-        return res.status(404).send('Subject mismatch');
+        return res.status(200).json({ message: 'Subjects pending verification', data: [] });
       }
       const registeredDate = new Date(users.registereddate);
       const fourYearsLater = new Date(registeredDate.setFullYear(registeredDate.getFullYear() + 4));
@@ -133,12 +131,9 @@ router.get('/idcard', verifyToken,async(req,res)=>{
           Photo: users.photo,
         }
       ];
-      return res.status(200).json({ message: 'Requested for ID-card', data});
-      }else {
-        return res.status(403).json({ message: 'This user cannot report for ID card' });
-      }
+      return res.status(200).json({ message: 'Requested for ID-card', data });
   }catch(error){
-    return res.status(500).send({message:"Internal server error!",error:error.message });
+    return res.status(500).json({ message:"Internal server error!", error: error.message });
   }
 });
 

@@ -37,3 +37,10 @@ backend/uploads/
 # OS
 Thumbs.db
 .DS_Store
+
+# Claude / Playwright artifacts
+.claudeignore
+.claude/
+.playwright-mcp/
+admin-dash.png
+admin-user-mgmt.png

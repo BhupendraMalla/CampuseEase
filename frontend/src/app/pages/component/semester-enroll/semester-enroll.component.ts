@@ -60,19 +60,18 @@ enrollButton(){
   }
 }
 semSubject() {
-  this.enrollmentService.getEnrollmentDataByEmail().subscribe(
-    (data) => {
+  this.enrollmentService.getEnrollmentDataByEmail().subscribe({
+    next: (data) => {
       this.enrollmentData = data;
-      this.subjectNotFound = false;
+      this.subjectNotFound = !data?.subjects?.length;
     },
-    (error) => {
-      if (error.error.message === "subject not found") {
-        this.subjectNotFound = true;
-      } else {
+    error: (error) => {
+      this.subjectNotFound = true;
+      if (error?.status !== 404) {
         console.error('Error fetching enrollment data:', error);
       }
     }
-  );
+  });
 }
 
 // initializeForm(): void {

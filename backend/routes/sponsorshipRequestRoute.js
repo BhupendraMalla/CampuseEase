@@ -58,9 +58,8 @@ router.get('/getsponsorshipbyemail', verifyToken, async (req, res) => {
       }
       
       const sponsorships = await Form.find({ name: user.name });
-       // Check if sponsorships is an empty array
       if (!sponsorships || sponsorships.length === 0) {
-        return res.status(404).json({ message: 'No sponsorships found' });
+        return res.json({ Sponsorship: [] });
       }
       res.json({ Sponsorship: sponsorships });
      
@@ -80,7 +79,7 @@ router.get('/getsponsorshipbyrole', verifyToken, async (req, res) => {
       }
       const sponsorship = await Form.find({sponsor:User.email});
       if (!sponsorship || sponsorship.length === 0) {
-          return res.status(404).json({ message: 'Sponsor not found' });
+          return res.json({ sponsorship: [] });
       }
       res.json({ sponsorship });
   } catch (error) {

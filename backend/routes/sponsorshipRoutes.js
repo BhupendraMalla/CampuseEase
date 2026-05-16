@@ -39,7 +39,7 @@ router.get('/getSponsorships', verifyToken, async (req, res) => {
     const sponsorships = await Sponsorship.find(filter);
 
     if (!sponsorships || sponsorships.length === 0) {
-      return res.status(404).json({ message: 'No sponsorships found with the given decision' });
+      return res.json({ message: `Sponsorships${decision ? ' with decision: ' + decision : ''}`, sponsorships: [] });
     }
 
     res.json({ message: `Sponsorships${decision ? ' with decision: ' + decision : ''}`, sponsorships });
