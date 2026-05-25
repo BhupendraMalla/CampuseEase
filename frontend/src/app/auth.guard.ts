@@ -10,7 +10,9 @@ export const authGuard: CanActivateFn = (route, state) => {
   let userData: any = null;
   try {
     userData = localStorage.getItem('userData');
-    isLoggedIn = userData !== null;
+    const userToken = localStorage.getItem('userToken');
+    // User is logged in only if BOTH token AND userData exist
+    isLoggedIn = userData !== null && userToken !== null;
   } catch (error) {
     console.warn('Storage access blocked by browser tracking prevention:', error);
     isLoggedIn = false;
@@ -25,7 +27,7 @@ export const authGuard: CanActivateFn = (route, state) => {
   if (route.data && route.data['requiredRoles']) {
     try {
       const userDataObj = JSON.parse(userData);
-      const userRole = userDataObj?.role;
+      const userRole = userDataObj?.role || localStorage.getItem('userRole');
       const requiredRoles = route.data['requiredRoles'] as string[];
       
       if (!userRole || !requiredRoles.includes(userRole)) {
@@ -35,6 +37,7 @@ export const authGuard: CanActivateFn = (route, state) => {
       }
     } catch (error) {
       console.error('Error parsing user data:', error);
+      router.navigate(['/login']);
       return false;
     }
   }
@@ -59,16 +62,6 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   return true;
 };
-// auth.guard.ts
-
-// import { Injectable } from '@angular/core';
-// import {
-//   CanActivate,
-//   ActivatedRouteSnapshot,
-//   RouterStateSnapshot,
-//   UrlTree,
-//   Router
-// } from '@angular/router';
 // import { Observable } from 'rxjs';
 // import { map } from 'rxjs/operators';
 // import { UserAuthService } from './core/services/user_auth/user-auth.service';

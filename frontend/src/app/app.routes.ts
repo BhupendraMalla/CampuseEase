@@ -42,7 +42,8 @@ export const routes: Routes = [
     {
         path:'admin-cv-list',
         component:AdminCvListComponent,
-        canActivate:[authGuard]
+        canActivate:[authGuard],
+        data: { requiredRoles: ['admin'] }
     },
     {
         path:'dashboard',
@@ -54,7 +55,8 @@ export const routes: Routes = [
     {
   path: 'user-management',
   component: UserManagementComponent,
-  canActivate: [authGuard]
+  canActivate: [authGuard],
+  data: { requiredRoles: ['admin'] }
 },
 {
   path: 'profile',

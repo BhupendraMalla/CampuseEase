@@ -106,13 +106,24 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.userRole = localStorage.getItem('userRole');
-
-    // Load currentSection
+    
+    // Validate and load currentSection
     const savedSection = localStorage.getItem('currentSection');
+    
+    // Determine default section based on role
+    let defaultSection = 'profile';
+    if (this.userRole === 'admin') {
+      defaultSection = 'user-management';
+    } else if (this.userRole === 'teacher' || this.userRole === 'faculty') {
+      defaultSection = 'course-record';
+    }
+    
+    // Use saved section only if it's valid for the current role
     if (savedSection) {
-      this.currentSection = savedSection;
+      const isValidSection = this.isValidSectionForRole(savedSection, this.userRole);
+      this.currentSection = isValidSection ? savedSection : defaultSection;
     } else {
-      this.currentSection = this.userRole === 'admin' ? 'user-management' : 'profile';
+      this.currentSection = defaultSection;
     }
 
     // Load theme preference
@@ -123,9 +134,31 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  isValidSectionForRole(section: string, role: string | null): boolean {
+    const adminSections = ['user-management', 'admin-fee', 'admin-schedule', 'enrollment-key', 'job-vacancy', 'list-course', 'admin-cv-list'];
+    const teacherSections = ['course-record', 'internal-records', 'model-question', 'assignment-materials', 'student-work'];
+    
+    if (role === 'admin') {
+      return adminSections.includes(section);
+    } else if (role === 'teacher' || role === 'faculty') {
+      return teacherSections.includes(section) || section === 'profile';
+    } else {
+      // Student/other roles
+      return !adminSections.includes(section) && !teacherSections.includes(section);
+    }
+  }
+
   showSection(section: string): void {
-    this.currentSection = section;
-    localStorage.setItem('currentSection', section);
+    // Security check: only allow sections valid for the current role
+    if (this.isValidSectionForRole(section, this.userRole)) {
+      this.currentSection = section;
+      localStorage.setItem('currentSection', section);
+    } else {
+      console.warn(`Access denied: Section ${section} not allowed for role ${this.userRole}`);
+      // Reset to default section
+      this.currentSection = this.userRole === 'admin' ? 'user-management' : 'profile';
+      localStorage.setItem('currentSection', this.currentSection);
+    }
   }
 
   toggleTheme(event: any): void {
@@ -141,7 +174,17 @@ export class DashboardComponent implements OnInit {
   }
 
   LogoutButton(): void {
-    localStorage.clear();
+    // Clear auth-related data but preserve theme preference
+    const savedTheme = localStorage.getItem('theme');
+    localStorage.removeItem('userData');
+    localStorage.removeItem('userToken');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('currentSection');
+    localStorage.removeItem('userID');
+    // Restore theme if it was set
+    if (savedTheme) {
+      localStorage.setItem('theme', savedTheme);
+    }
     this.router.navigate(['/login']);
   }
 }

@@ -34,8 +34,26 @@ export class LoginPageComponent implements OnInit {
 
   checkUserToken(): void {
     const userToken = localStorage.getItem('userToken');
-    if (userToken) {
-      this.router.navigate(['/dashboard']);
+    const userData = localStorage.getItem('userData');
+    // Only redirect to dashboard if BOTH token AND userData exist (complete session)
+    if (userToken && userData) {
+      try {
+        const parsedData = JSON.parse(userData);
+        // Additional safety: verify userData has required fields
+        if (parsedData?.email && parsedData?.password) {
+          this.router.navigate(['/dashboard']);
+        }
+      } catch (error) {
+        // If userData is corrupted, clear it and stay on login
+        localStorage.removeItem('userData');
+        localStorage.removeItem('userToken');
+        localStorage.removeItem('userRole');
+      }
+    } else if (userToken || userData) {
+      // If only one exists but not both, clear both to ensure consistency
+      localStorage.removeItem('userToken');
+      localStorage.removeItem('userData');
+      localStorage.removeItem('userRole');
     }
   }
 
