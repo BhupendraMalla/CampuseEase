@@ -78,27 +78,56 @@ router.get('/subjectsList', verifyToken, async (req, res) => {
 router.post('/postEnrollmentKeyForm', verifyToken, async (req, res) => {
   try {
     const { enrollment_key,userEmail } = req.body;
+    const studentEmail = req.user.email;
     
     const findEnrollmentKey = await Enrollment.findOne({ enrollment_key });
     if (!findEnrollmentKey) {
       console.log('Enrollment key is not found');
-      return res.json({ message: 'Enrollment key is not found' });
+      return res.json({ message: 'Enrollment key is not found', matchEnrollmentKey: false });
     }
 
-    // console.log('Associated Subjects:', findEnrollmentKey.subjects);
+    // Check if student already has an enrollment
+    const existingEnrollment = await UserSubjects.findOne({ userEmail: studentEmail });
+    if (existingEnrollment) {
+      console.log('Student already enrolled');
+      return res.json({ 
+        matchEnrollmentKey: true, 
+        message: 'Student already enrolled in subjects', 
+        subjects: existingEnrollment.subjects,
+        isExisting: true
+      });
+    }
+
+    // Create new enrollment with all details
     const enrolledSubjects = new UserSubjects({
       enrollment_key: findEnrollmentKey.enrollment_key,
+      semester: findEnrollmentKey.semester,
+      department: findEnrollmentKey.department,
       subjects: findEnrollmentKey.subjects,
-      userEmail:req.user.email
+      userEmail: studentEmail
     });
 
     await enrolledSubjects.save();
 
-
-    res.json({ matchEnrollmentKey: true, message: 'Enrollment key is found', subjects: findEnrollmentKey.subjects });
+    res.json({ 
+      matchEnrollmentKey: true, 
+      message: 'Enrollment key is found and enrolled successfully', 
+      subjects: findEnrollmentKey.subjects,
+      enrollment_key: findEnrollmentKey.enrollment_key,
+      semester: findEnrollmentKey.semester,
+      department: findEnrollmentKey.department
+    });
   } catch (error) {
     console.log('Something went wrong', error);
-    res.status(500).json({ message: 'Something went wrong', error });
+    // Handle unique constraint violation
+    if (error.code === 11000) {
+      return res.status(400).json({ 
+        message: 'Student already enrolled in subjects', 
+        matchEnrollmentKey: false,
+        error: error.message 
+      });
+    }
+    res.status(500).json({ message: 'Something went wrong', error: error.message });
   }
 });
 

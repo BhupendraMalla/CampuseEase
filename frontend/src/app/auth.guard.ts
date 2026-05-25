@@ -11,14 +11,17 @@ export const authGuard: CanActivateFn = (route, state) => {
   try {
     userData = localStorage.getItem('userData');
     const userToken = localStorage.getItem('userToken');
-    // User is logged in only if BOTH token AND userData exist
-    isLoggedIn = userData !== null && userToken !== null;
+    const userRole = localStorage.getItem('userRole');
+    // User is logged in only if ALL required tokens exist
+    isLoggedIn = userData !== null && userToken !== null && userRole !== null;
   } catch (error) {
     console.warn('Storage access blocked by browser tracking prevention:', error);
     isLoggedIn = false;
   }
 
   if(!isLoggedIn){
+    // Set flag to prevent auto-redirect on login page
+    sessionStorage.setItem('justLoggedOut', 'true');
     router.navigate(['/login'])
     return false;
   }
@@ -32,11 +35,13 @@ export const authGuard: CanActivateFn = (route, state) => {
       
       if (!userRole || !requiredRoles.includes(userRole)) {
         console.warn(`Access denied: User role ${userRole} not in required roles`, requiredRoles);
+        sessionStorage.setItem('justLoggedOut', 'true');
         router.navigate(['/dashboard']);
         return false;
       }
     } catch (error) {
       console.error('Error parsing user data:', error);
+      sessionStorage.setItem('justLoggedOut', 'true');
       router.navigate(['/login']);
       return false;
     }
@@ -51,6 +56,7 @@ export const authGuard: CanActivateFn = (route, state) => {
       
       if (!userDepartment || !requiredDepartments.includes(userDepartment)) {
         console.warn(`Access denied: User department ${userDepartment} not in required departments`, requiredDepartments);
+        sessionStorage.setItem('justLoggedOut', 'true');
         router.navigate(['/dashboard']);
         return false;
       }

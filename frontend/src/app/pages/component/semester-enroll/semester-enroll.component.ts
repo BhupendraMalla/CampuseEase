@@ -31,32 +31,41 @@ ngOnInit(): void {
   this.enrollmentKeyForm= this.formBuilder.group({
     enrollment_key :['', Validators.required],
     userEmail:['']
-  })
-
-}
-enrollSubject(){
-  console.log(this.subject);
-  debugger
+  });
+  // Load existing enrollment data
+  this.semSubject();
 }
 enrollButton(){
-  const token = localStorage.getItem('token'); 
-
   if(this.enrollmentKeyForm.valid){
-    console.log(this.enrollmentKeyForm.value);
-    this.enrollmentService.postEnrollmentJoin(this.enrollmentKeyForm.value).subscribe((res)=>{
-      if(res.matchEnrollmentKey){
-      
-        alertify.success('Enrollment key added ')
-        this.semSubject()
-        debugger
+    this.enrollmentService.postEnrollmentJoin(this.enrollmentKeyForm.value).subscribe(
+      (res) => {
+        if(res.matchEnrollmentKey){
+          if(res.isExisting){
+            alertify.warning('You are already enrolled in these subjects');
+          } else {
+            alertify.success('Enrollment successful! Subjects have been added.');
+          }
+          // Clear the form
+          this.enrollmentKeyForm.reset();
+          // Reload enrolled subjects
+          this.semSubject();
+        }
+        else{
+          alertify.error('Enrollment key not found');
+        }
+      },
+      (error) => {
+        console.error('Enrollment error:', error);
+        if(error?.error?.message){
+          alertify.error(error.error.message);
+        } else {
+          alertify.error('Failed to enroll. Please try again.');
+        }
       }
-      else{
-        alertify.error('Enrollment key Doesnot Found')
-      }
-    })
+    );
   }
   else{
-    alertify.error('Please enter the valid Enrollment Key')
+    alertify.error('Please enter a valid Enrollment Key');
   }
 }
 semSubject() {

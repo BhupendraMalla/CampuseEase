@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const enrollmentSchema = new mongoose.Schema({
-    enrollment_key: { type: String, required: true },
+    enrollment_key: { type: String, required: true, unique: true },
     semester: { type: String, required: true },
     department: { type: String, required: true },
     subjects: [{
@@ -20,7 +20,8 @@ const enrollmentSchema = new mongoose.Schema({
         type: String,
         required: true 
       },
-    }], 
+    }],
+    createdAt: { type: Date, default: Date.now }
   });
 
   const EnrollmentSubjects = mongoose.model('EnrollmentSubjects', enrollmentSchema);

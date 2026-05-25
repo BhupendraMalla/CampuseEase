@@ -174,6 +174,9 @@ export class DashboardComponent implements OnInit {
   }
 
   LogoutButton(): void {
+    // Set flag to prevent auto-redirect after logout
+    sessionStorage.setItem('justLoggedOut', 'true');
+    
     // Clear auth-related data but preserve theme preference
     const savedTheme = localStorage.getItem('theme');
     localStorage.removeItem('userData');
@@ -181,10 +184,19 @@ export class DashboardComponent implements OnInit {
     localStorage.removeItem('userRole');
     localStorage.removeItem('currentSection');
     localStorage.removeItem('userID');
+    
+    // Clear any other auth-related keys
+    const authKeys = Object.keys(localStorage).filter(key => 
+      key.includes('user') || key.includes('token') || key.includes('auth')
+    );
+    authKeys.forEach(key => localStorage.removeItem(key));
+    
     // Restore theme if it was set
     if (savedTheme) {
       localStorage.setItem('theme', savedTheme);
     }
+    
+    // Navigate to login
     this.router.navigate(['/login']);
   }
 }
