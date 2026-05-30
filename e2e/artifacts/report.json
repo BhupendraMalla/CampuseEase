@@ -1,0 +1,477 @@
+{
+  "pass": 67,
+  "fail": 0,
+  "warn": 0,
+  "total": 67,
+  "results": [
+    {
+      "role": "admin",
+      "section": "(login)",
+      "status": "PASS",
+      "detail": "authenticated → /dashboard",
+      "screenshot": "002-admin-dashboard.png"
+    },
+    {
+      "role": "admin",
+      "section": "User Management",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "003-admin-user-management.png"
+    },
+    {
+      "role": "admin",
+      "section": "Search Data",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "004-admin-search-data.png"
+    },
+    {
+      "role": "admin",
+      "section": "Fee Management",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "005-admin-fee-management.png"
+    },
+    {
+      "role": "admin",
+      "section": "Club",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "006-admin-club.png"
+    },
+    {
+      "role": "admin",
+      "section": "Department",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "007-admin-department.png"
+    },
+    {
+      "role": "admin",
+      "section": "Class Schedule",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "008-admin-class-schedule.png"
+    },
+    {
+      "role": "admin",
+      "section": "Course Enrollment",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "009-admin-course-enrollment.png"
+    },
+    {
+      "role": "admin",
+      "section": "Courses",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "010-admin-courses.png"
+    },
+    {
+      "role": "admin",
+      "section": "Attendance",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "011-admin-attendance.png"
+    },
+    {
+      "role": "admin",
+      "section": "Routine / Result",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "012-admin-routine-result.png"
+    },
+    {
+      "role": "admin",
+      "section": "Academic Records",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "013-admin-academic-records.png"
+    },
+    {
+      "role": "admin",
+      "section": "Id Card",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "014-admin-id-card.png"
+    },
+    {
+      "role": "admin",
+      "section": "Events",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "015-admin-events.png"
+    },
+    {
+      "role": "admin",
+      "section": "Job Vacancy",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "016-admin-job-vacancy.png"
+    },
+    {
+      "role": "admin",
+      "section": "Feedback",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "017-admin-feedback.png"
+    },
+    {
+      "role": "admin",
+      "section": "CV Submission",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "018-admin-cv-submission.png"
+    },
+    {
+      "role": "admin",
+      "section": "Sponsorship / Scholarship",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "019-admin-sponsorship-scholarship.png"
+    },
+    {
+      "role": "admin",
+      "section": "Notice",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "020-admin-notice.png"
+    },
+    {
+      "role": "admin",
+      "section": "Profile",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "021-admin-profile.png"
+    },
+    {
+      "role": "admin",
+      "section": "✍ create-department",
+      "status": "PASS",
+      "detail": "submitted create-department (teacher=Test Faculty)",
+      "screenshot": "022-admin-write-create-department.png"
+    },
+    {
+      "role": "faculty",
+      "section": "(login)",
+      "status": "PASS",
+      "detail": "authenticated → /dashboard",
+      "screenshot": "024-faculty-dashboard.png"
+    },
+    {
+      "role": "faculty",
+      "section": "Profile",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "025-faculty-profile.png"
+    },
+    {
+      "role": "faculty",
+      "section": "Change Password",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "026-faculty-change-password.png"
+    },
+    {
+      "role": "faculty",
+      "section": "Chat",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "027-faculty-chat.png"
+    },
+    {
+      "role": "faculty",
+      "section": "My Course",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "028-faculty-my-course.png"
+    },
+    {
+      "role": "faculty",
+      "section": "Attendance (OTP)",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "029-faculty-attendance-otp.png"
+    },
+    {
+      "role": "faculty",
+      "section": "Attendance (Face)",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "030-faculty-attendance-face.png"
+    },
+    {
+      "role": "faculty",
+      "section": "Attendance (Register)",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "031-faculty-attendance-register.png"
+    },
+    {
+      "role": "faculty",
+      "section": "Class Schedule",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "032-faculty-class-schedule.png"
+    },
+    {
+      "role": "faculty",
+      "section": "Assignment",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "033-faculty-assignment.png"
+    },
+    {
+      "role": "faculty",
+      "section": "Model Question",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "034-faculty-model-question.png"
+    },
+    {
+      "role": "faculty",
+      "section": "Academic Management",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "035-faculty-academic-management.png"
+    },
+    {
+      "role": "faculty",
+      "section": "Events",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "036-faculty-events.png"
+    },
+    {
+      "role": "faculty",
+      "section": "Feedback",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "037-faculty-feedback.png"
+    },
+    {
+      "role": "faculty",
+      "section": "Internal Valuations",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "038-faculty-internal-valuations.png"
+    },
+    {
+      "role": "faculty",
+      "section": "Student Work Record",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "039-faculty-student-work-record.png"
+    },
+    {
+      "role": "faculty",
+      "section": "Notice",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "040-faculty-notice.png"
+    },
+    {
+      "role": "student",
+      "section": "(login)",
+      "status": "PASS",
+      "detail": "authenticated → /dashboard",
+      "screenshot": "042-student-dashboard.png"
+    },
+    {
+      "role": "student",
+      "section": "Profile",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "043-student-profile.png"
+    },
+    {
+      "role": "student",
+      "section": "Change Password",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "044-student-change-password.png"
+    },
+    {
+      "role": "student",
+      "section": "Chat",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "045-student-chat.png"
+    },
+    {
+      "role": "student",
+      "section": "Fee Payment",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "046-student-fee-payment.png"
+    },
+    {
+      "role": "student",
+      "section": "Attendance (OTP)",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "047-student-attendance-otp.png"
+    },
+    {
+      "role": "student",
+      "section": "Attendance (Face)",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "048-student-attendance-face.png"
+    },
+    {
+      "role": "student",
+      "section": "Semester Enroll",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "049-student-semester-enroll.png"
+    },
+    {
+      "role": "student",
+      "section": "Courses",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "050-student-courses.png"
+    },
+    {
+      "role": "student",
+      "section": "Class Schedule",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "051-student-class-schedule.png"
+    },
+    {
+      "role": "student",
+      "section": "Clubs",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "052-student-clubs.png"
+    },
+    {
+      "role": "student",
+      "section": "ID Card Renew",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "053-student-id-card-renew.png"
+    },
+    {
+      "role": "student",
+      "section": "Assignment",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "054-student-assignment.png"
+    },
+    {
+      "role": "student",
+      "section": "Model Question",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "055-student-model-question.png"
+    },
+    {
+      "role": "student",
+      "section": "Sponsorship / Scholarship",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "056-student-sponsorship-scholarship.png"
+    },
+    {
+      "role": "student",
+      "section": "Feedback",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "057-student-feedback.png"
+    },
+    {
+      "role": "student",
+      "section": "Events",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "058-student-events.png"
+    },
+    {
+      "role": "student",
+      "section": "Notice",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "059-student-notice.png"
+    },
+    {
+      "role": "student",
+      "section": "Academic Record",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "060-student-academic-record.png"
+    },
+    {
+      "role": "student",
+      "section": "✍ edit-profile",
+      "status": "PASS",
+      "detail": "profile address updated",
+      "screenshot": "061-student-write-edit-profile.png"
+    },
+    {
+      "role": "student",
+      "section": "✍ semester-enroll",
+      "status": "PASS",
+      "detail": "enrolled with key CSE-2024",
+      "screenshot": "062-student-write-semester-enroll.png"
+    },
+    {
+      "role": "student",
+      "section": "✍ submit-feedback",
+      "status": "PASS",
+      "detail": "feedback submitted",
+      "screenshot": "063-student-write-submit-feedback.png"
+    },
+    {
+      "role": "secretary",
+      "section": "(login)",
+      "status": "PASS",
+      "detail": "authenticated → /dashboard",
+      "screenshot": "065-secretary-dashboard.png"
+    },
+    {
+      "role": "secretary",
+      "section": "Profile",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "066-secretary-profile.png"
+    },
+    {
+      "role": "secretary",
+      "section": "Change Password",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "067-secretary-change-password.png"
+    },
+    {
+      "role": "secretary",
+      "section": "Club",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "068-secretary-club.png"
+    },
+    {
+      "role": "secretary",
+      "section": "Notice",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "069-secretary-notice.png"
+    },
+    {
+      "role": "secretary",
+      "section": "Events",
+      "status": "PASS",
+      "detail": "rendered",
+      "screenshot": "070-secretary-events.png"
+    },
+    {
+      "role": "finance",
+      "section": "(login)",
+      "status": "PASS",
+      "detail": "authenticated → /dashboard",
+      "screenshot": "072-finance-dashboard.png"
+    }
+  ]
+}

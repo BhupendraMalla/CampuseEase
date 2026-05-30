@@ -58,7 +58,9 @@ router.post('/signup', async (req, res) => {
     const newUser = new userRegister({
       name,
       email,
-      rollno: rollno || null,
+      // Only set rollno when provided. Storing an explicit `null` makes every
+      // roll-less account collide on the unique (sparse) rollno index.
+      ...(rollno ? { rollno } : {}),
       address,
       password: hashedPassword,
       confirmPassword: hashedPassword,

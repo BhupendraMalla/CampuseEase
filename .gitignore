@@ -44,3 +44,7 @@ Thumbs.db
 .playwright-mcp/
 admin-dash.png
 admin-user-mgmt.png
+
+# E2E raw recording (keep the campusease-demo.mp4 deliverable + screenshots + report)
+e2e/artifacts/video/
+e2e/artifacts/*.webm
