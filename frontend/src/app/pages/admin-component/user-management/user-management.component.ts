@@ -138,7 +138,7 @@ export class UserManagementComponent implements OnInit {
         this.resetForm();
         this.loadAllData();
       }, err => {
-        alertify.error('Error updating user');
+        alertify.error(err?.error?.message || 'Error updating user');
       });
     } else {
       // Create user with password
@@ -147,7 +147,7 @@ export class UserManagementComponent implements OnInit {
         this.resetForm();
         this.loadAllData();
       }, err => {
-        alertify.error('Error creating user');
+        alertify.error(err?.error?.message || 'Error creating user');
       });
     }
   }

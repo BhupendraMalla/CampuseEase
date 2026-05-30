@@ -15,8 +15,10 @@ const ROLE_PERMISSIONS = {
     accessAllDepartments: true
   },
   'admin': {
-    canCreateUsers: ['student', 'faculty', 'secretary'],
-    canDeleteUsers: ['student', 'faculty', 'secretary'],
+    // Admin can create/manage every role the UI offers, except super-admin
+    // (only a super-admin may mint another super-admin).
+    canCreateUsers: ['student', 'faculty', 'secretary', 'admin', 'hod', 'principal', 'coordinator', 'director', 'it-officer', 'graphic-designer', 'receptionist', 'operations-officer', 'finance-officer'],
+    canDeleteUsers: ['student', 'faculty', 'secretary', 'admin', 'hod', 'principal', 'coordinator', 'director', 'it-officer', 'graphic-designer', 'receptionist', 'operations-officer', 'finance-officer'],
     canViewStudents: true,
     canViewAssets: false,
     canViewFees: false,
