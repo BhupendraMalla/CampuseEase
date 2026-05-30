@@ -1,7 +1,71 @@
 const express = require('express');
 const router = express.Router();
+const axios = require('axios');
 const Fee = require('../models/feeModel');
 const verifyToken = require('../middleware');
+
+const KHALTI_BASE = process.env.KHALTI_BASE_URL || 'https://dev.khalti.com/api/v2';
+const KHALTI_SECRET = process.env.KHALTI_SECRET_KEY || '';
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:4200';
+const khaltiHeaders = { Authorization: `Key ${KHALTI_SECRET}`, 'Content-Type': 'application/json' };
+
+// --- Khalti ePayment (KPG-2) ---------------------------------------------
+
+// 1) Initiate: create a Pending fee, ask Khalti for a payment_url, redirect user there.
+router.post('/khalti/initiate', verifyToken, async (req, res) => {
+  try {
+    const amount = Number(req.body.amount);
+    if (!amount || amount <= 0) return res.status(400).json({ message: 'Invalid amount' });
+
+    const fee = new Fee({
+      studentId: req.user.userId,
+      amount,
+      method: 'Online',
+      status: 'Pending',
+      receiptNumber: 'RCPT-' + Date.now()
+    });
+    await fee.save();
+
+    const resp = await axios.post(`${KHALTI_BASE}/epayment/initiate/`, {
+      return_url: `${FRONTEND_URL}/dashboard`,
+      website_url: FRONTEND_URL,
+      amount: Math.round(amount * 100), // paisa
+      purchase_order_id: fee._id.toString(),
+      purchase_order_name: 'College Fee Payment',
+      customer_info: { name: req.user.name || 'Student', email: req.user.email, phone: '9800000000' }
+    }, { headers: khaltiHeaders });
+
+    fee.pidx = resp.data.pidx;
+    await fee.save();
+
+    res.json({ payment_url: resp.data.payment_url, pidx: resp.data.pidx, feeId: fee._id });
+  } catch (err) {
+    console.error('Khalti initiate error:', err.response?.data || err.message);
+    res.status(502).json({ message: 'Khalti initiate failed', error: err.response?.data || err.message });
+  }
+});
+
+// 2) Verify (lookup): after the return-url callback, confirm the transaction and mark the fee.
+router.post('/khalti/verify', verifyToken, async (req, res) => {
+  try {
+    const { pidx } = req.body;
+    if (!pidx) return res.status(400).json({ message: 'pidx is required' });
+
+    const resp = await axios.post(`${KHALTI_BASE}/epayment/lookup/`, { pidx }, { headers: khaltiHeaders });
+    const { status, transaction_id } = resp.data;
+
+    const fee = await Fee.findOne({ pidx });
+    if (fee) {
+      fee.status = status === 'Completed' ? 'Paid' : (status === 'Pending' ? 'Pending' : 'Unpaid');
+      if (transaction_id) fee.transactionId = transaction_id;
+      await fee.save();
+    }
+    res.json({ status, transaction_id, fee });
+  } catch (err) {
+    console.error('Khalti verify error:', err.response?.data || err.message);
+    res.status(502).json({ message: 'Khalti verify failed', error: err.response?.data || err.message });
+  }
+});
 
 // Student pays fee
 router.post('/payFee', verifyToken, async (req, res) => {

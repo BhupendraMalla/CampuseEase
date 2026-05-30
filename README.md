@@ -134,6 +134,38 @@ notices, academic records.
 
 ---
 
+## Payments (Khalti ePayment / KPG-2)
+
+Fee payment and ID-card renewal use Khalti's **ePayment (Web Checkout, KPG-2)** —
+the redirect-based flow (the old `khalti-checkout-web` popup SDK was retired).
+
+Flow:
+1. Frontend calls `POST /khalti/initiate` → backend creates a `Pending` fee and
+   calls Khalti `initiate` with the **server-side secret key**, returning a `payment_url`.
+2. Browser is redirected to Khalti, the user pays, Khalti redirects back to
+   `/dashboard?pidx=...&status=Completed`.
+3. Frontend calls `POST /khalti/verify` → backend `lookup`s the `pidx`; if
+   `status === "Completed"` the fee is marked **Paid**.
+
+Config lives in `backend/.env` (`KHALTI_BASE_URL`, `KHALTI_SECRET_KEY`,
+`FRONTEND_URL`). Defaults target the **sandbox** (`https://dev.khalti.com/api/v2`
+with the documented test key). For production use `https://khalti.com/api/v2`
+and your live secret key from [admin.khalti.com](https://admin.khalti.com).
+
+**Sandbox test login** (on the Khalti payment page): Khalti ID `9800000000`,
+MPIN `1111`, OTP `987654`.
+
+> The secret key is **only** on the backend — never shipped to the browser.
+
+### Attendance (OTP)
+
+OTP attendance emails the code via `EMAIL_USER`/`EMAIL_PASS` (Gmail app password).
+When those aren't set, `POST /send-otp` runs in **dev mode** and returns the OTP
+in the response (`devOtp`) so attendance is testable without email. Face
+attendance uses the webcam (`ngx-webcam`).
+
+---
+
 ## End-to-end testing & demo video
 
 A scripted Playwright walkthrough drives the **real running app** like a human:

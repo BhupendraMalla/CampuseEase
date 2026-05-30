@@ -5,8 +5,10 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment.development';
-import KhaltiCheckout from "khalti-checkout-web";
 import * as alertify from 'alertifyjs';
+import { KhaltiService } from '../../../core/services/khalti/khalti.service';
+
+const ID_CARD_FEE = 100; // Rs
 
 @Component({
   selector: 'app-id-card',
@@ -21,7 +23,8 @@ export class IdCardComponent {
 
   constructor(private userService:UserAuthService,private formBuilder: FormBuilder,
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private khalti: KhaltiService
   ){
     this.showUserProfile()
   }
@@ -37,6 +40,29 @@ export class IdCardComponent {
 
     });
     this.showUserProfile()
+    this.handleKhaltiReturn()
+  }
+
+  // After Khalti redirects back, verify and then submit the stored ID-card request.
+  private handleKhaltiReturn(): void {
+    if (localStorage.getItem('khalti_context') !== 'idcard') return;
+    const { pidx } = KhaltiService.readCallback();
+    const stored = localStorage.getItem('idcard_pending');
+    if (!pidx || !stored) return;
+    localStorage.removeItem('khalti_context');
+    localStorage.removeItem('idcard_pending');
+    this.khalti.verify(pidx).subscribe({
+      next: (res) => {
+        KhaltiService.clearCallbackParams();
+        if (res.status === 'Completed') {
+          alertify.success('Payment verified — submitting ID card request');
+          this.submitForm(JSON.parse(stored), pidx);
+        } else {
+          alertify.warning(`Payment status: ${res.status}`);
+        }
+      },
+      error: () => { KhaltiService.clearCallbackParams(); alertify.error('Could not verify payment'); }
+    });
   }
   showUserProfile() {
     this.userService.getIdCardData().subscribe((res) => {
@@ -49,29 +75,21 @@ export class IdCardComponent {
     });
   }
   makePayment(): void {
-    const config = {
-      publicKey: "test_public_key_0275cc5e2bae42fb890536aae01e9e73",
-      productIdentity: "1234567890",
-      productName: "Drogon",
-      productUrl: "http://gameofthrones.com/buy/Dragons",
-      eventHandler: {
-        onSuccess: (payload: any) => {
-          alertify.success("Payment successful");
-          this.submitForm(payload);
-        },
-        onError: (error: any) => {
-          console.log(error);
-          alertify.error("Payment failed");
-        },
-        onClose: () => {
-          console.log('Widget is closing');
-        }
+    // Persist the form so we can submit it after the Khalti redirect returns.
+    localStorage.setItem('idcard_pending', JSON.stringify(this.enrollForm.value));
+    localStorage.setItem('currentSection', 'id-card');
+    localStorage.setItem('khalti_context', 'idcard');
+    this.khalti.initiate(ID_CARD_FEE).subscribe({
+      next: (res) => {
+        if (res.payment_url) window.location.href = res.payment_url;
+        else alertify.error('Could not start Khalti payment');
       },
-      paymentPreference: ["KHALTI", "EBANKING", "MOBILE_BANKING", "CONNECT_IPS", "SCT"],
-    };
-
-    const checkout = new KhaltiCheckout(config);
-    checkout.show({ amount: 10000 });
+      error: (err) => {
+        localStorage.removeItem('khalti_context');
+        localStorage.removeItem('idcard_pending');
+        alertify.error(err.error?.message || 'Failed to start Khalti payment');
+      }
+    });
   }
 
   onSubmit(): void {
@@ -82,12 +100,11 @@ export class IdCardComponent {
     }
   }
 
-submitForm(paymentPayload: any): void {
-  const formData = this.enrollForm.value;
+submitForm(formData: any, pidx?: string): void {
   const token = localStorage.getItem('userToken') || '';
   const headers = { Authorization: `Bearer ${token}` };
 
-  this.http.post(`${environment.api_url}postIdCard`, { ...formData, paymentPayload }, { headers }).subscribe(
+  this.http.post(`${environment.api_url}postIdCard`, { ...formData, paymentPayload: { pidx } }, { headers }).subscribe(
     (res: any) => {
       alertify.success(res.message);
       this.router.navigate(['/success']);

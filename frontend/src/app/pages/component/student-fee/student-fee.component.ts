@@ -4,9 +4,9 @@ import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angula
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import * as alertify from 'alertifyjs';
-import KhaltiCheckout from "khalti-checkout-web";
 import QRCode from 'qrcode';
 import { environment } from '../../../../environments/environment.development';
+import { KhaltiService } from '../../../core/services/khalti/khalti.service';
 
 @Component({
   selector: 'app-student-fee',
@@ -27,7 +27,8 @@ export class StudentFeeComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private khalti: KhaltiService
   ) {}
 
   ngOnInit(): void {
@@ -39,7 +40,28 @@ export class StudentFeeComponent implements OnInit {
     const tokenData = this.parseJwt(localStorage.getItem('userToken') || '');
     this.studentId = tokenData.userId || '';
 
+    this.handleKhaltiReturn();
     this.fetchPaymentHistory();
+  }
+
+  // After Khalti redirects back (?pidx&status), verify the transaction server-side.
+  private handleKhaltiReturn(): void {
+    if (localStorage.getItem('khalti_context') !== 'fee') return;
+    const { pidx } = KhaltiService.readCallback();
+    if (!pidx) return;
+    localStorage.removeItem('khalti_context');
+    this.khalti.verify(pidx).subscribe({
+      next: (res) => {
+        if (res.status === 'Completed') alertify.success('Payment verified — fee paid!');
+        else alertify.warning(`Payment status: ${res.status}`);
+        KhaltiService.clearCallbackParams();
+        this.fetchPaymentHistory();
+      },
+      error: () => {
+        alertify.error('Could not verify payment');
+        KhaltiService.clearCallbackParams();
+      }
+    });
   }
 
   parseJwt(token: string): any {
@@ -68,32 +90,20 @@ export class StudentFeeComponent implements OnInit {
   }
 
   payWithKhalti(): void {
-    const config = {
-      publicKey: "test_public_key_0275cc5e2bae42fb890536aae01e9e73",
-      productIdentity: this.studentId,
-      productName: "College Fee Payment",
-      productUrl: "http://yourcollege.com/student/fees",
-      eventHandler: {
-        onSuccess: (payload: any) => {
-          alertify.success("Payment successful!");
-          this.submitFee('Online', payload);
-        },
-        onError: (error: any) => {
-          console.error(error);
-          alertify.error("Payment failed!");
-        },
-        onClose: () => {
-          console.log("Khalti widget closed");
-        }
+    const amount = Number(this.feeForm.value.amount);
+    // Remember the section + flow so we can verify after Khalti redirects back.
+    localStorage.setItem('currentSection', 'student-fee');
+    localStorage.setItem('khalti_context', 'fee');
+    this.khalti.initiate(amount).subscribe({
+      next: (res) => {
+        if (res.payment_url) window.location.href = res.payment_url;
+        else alertify.error('Could not start Khalti payment');
       },
-      paymentPreference: [
-        "KHALTI", "EBANKING", "MOBILE_BANKING", "CONNECT_IPS", "SCT"
-      ],
-    };
-
-    const checkout = new KhaltiCheckout(config);
-    const amount = Number(this.feeForm.value.amount) * 100; // Khalti amount in paisa
-    checkout.show({ amount });
+      error: (err) => {
+        localStorage.removeItem('khalti_context');
+        alertify.error(err.error?.message || 'Failed to start Khalti payment');
+      }
+    });
   }
 
   generateQRCode(): void {

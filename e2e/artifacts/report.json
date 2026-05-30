@@ -1,7 +1,7 @@
 {
-  "pass": 66,
+  "pass": 67,
   "fail": 0,
-  "warn": 1,
+  "warn": 0,
   "total": 67,
   "results": [
     {
@@ -413,8 +413,8 @@
     {
       "role": "student",
       "section": "✍ semester-enroll",
-      "status": "WARN",
-      "detail": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(",
+      "status": "PASS",
+      "detail": "enrolled with key CSE-2024",
       "screenshot": "062-student-write-semester-enroll.png"
     },
     {

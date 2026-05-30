@@ -86,12 +86,22 @@ router.post('/send-otp', async (req, res) => {
             { upsert: true, new: true }
         );
 
-        await sendOtp(email, otp, formattedDate);
-        console.log(`OTP sent to ${email}: ${otp}`);
-        res.status(200).send('OTP sent');
+        const emailConfigured = !!(process.env.EMAIL_USER && process.env.EMAIL_PASS);
+        if (emailConfigured) {
+            try {
+                await sendOtp(email, otp, formattedDate);
+                return res.status(200).json({ success: true, message: 'OTP sent to your email' });
+            } catch (mailErr) {
+                console.error('Email send failed, falling back to dev OTP:', mailErr.message);
+            }
+        }
+        // Dev fallback: no email configured (or send failed) → return the OTP so
+        // attendance can still be marked/tested. Set EMAIL_USER/EMAIL_PASS for real email.
+        console.log(`[dev] OTP for ${email}: ${otp}`);
+        return res.status(200).json({ success: true, message: 'OTP generated (dev mode — email not configured)', devOtp: otp });
     } catch (err) {
         console.error('Error generating OTP:', err);
-        res.status(500).send('Error generating OTP');
+        res.status(500).json({ success: false, error: 'Error generating OTP' });
     }
 });
 

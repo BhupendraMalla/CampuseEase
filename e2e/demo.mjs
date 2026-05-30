@@ -74,8 +74,19 @@ async function panel(page) {
 }
 
 async function login(page, role) {
-  await page.goto(BASE + '/login', { waitUntil: 'domcontentloaded' });
-  await sleep(page, 800);
+  // Robust: handle a slow dev server / any auto-redirect by retrying until the
+  // login form is present.
+  let ready = false;
+  for (let attempt = 1; attempt <= 4 && !ready; attempt++) {
+    await page.goto(BASE + '/login', { waitUntil: 'domcontentloaded' });
+    try { await page.evaluate(() => { localStorage.clear(); sessionStorage.clear(); }); } catch {}
+    if (page.url().includes('/dashboard')) { await page.goto(BASE + '/login', { waitUntil: 'domcontentloaded' }); }
+    try {
+      await page.waitForSelector('input[formcontrolname="email"]', { timeout: 8000, state: 'visible' });
+      ready = true;
+    } catch { await sleep(page, 1000); }
+  }
+  await sleep(page, 600);
   await page.locator('input[formcontrolname="email"]').click();
   await page.locator('input[formcontrolname="email"]').pressSequentially(role.email, { delay: 35 });
   await sleep(page, 250);

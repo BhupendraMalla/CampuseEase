@@ -28,6 +28,13 @@ const FeeSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true
+  },
+  // Khalti ePayment identifiers (set for online payments)
+  pidx: {
+    type: String
+  },
+  transactionId: {
+    type: String
   }
 }, {
   timestamps: true
