@@ -22,9 +22,7 @@ export class SemesterEnrollComponent implements OnInit{
     'A', 'A-', 'B-', 'B', 'B+', 'C+', 'C', 'C-', 'D', 'D+'
   ];
 constructor(private formBuilder:FormBuilder, private enrollmentService:EnrollmentService){
-  this.enrollSubject();
   this.semSubject()
-  
 }
 
 ngOnInit(): void {

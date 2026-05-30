@@ -148,7 +148,8 @@ bash e2e/run.sh
 ```
 
 Outputs land in `e2e/artifacts/`:
-- `campusease-demo.webm` — full demo video of the session
+- `videos/<role>-demo.mp4` — one smooth demo clip per role
+- `campusease-demo.mp4` — combined full walkthrough of every role
 - `screenshots/` — one screenshot per feature page, per role
 - `report.md` / `report.json` — pass/fail table for every feature checked
 
@@ -176,8 +177,16 @@ CampuseEase/
 │       ├── pages/           # feature components (admin / teacher / shared)
 │       ├── shared/dashboard # role-aware dashboard shell + sidebar
 │       └── core/            # auth service, interceptor, guards
-└── e2e/                     # Playwright end-to-end demo + smoke test
+├── e2e/                     # Playwright end-to-end demo + smoke test
+│   ├── demo.mjs             # the walkthrough (records per-role videos)
+│   ├── run.sh               # runner
+│   └── artifacts/           # videos, screenshots, report (generated)
+└── docs/                    # API reference, role-access & setup guides
 ```
+
+### Additional docs
+See [`docs/`](docs/): `API_DOCUMENTATION.md`, `ROLE_BASED_ACCESS_GUIDE.md`,
+`QUICK_START_SETUP.md`, `TROUBLESHOOTING_GUIDE.md`.
 
 ---
 

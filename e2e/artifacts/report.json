@@ -1,7 +1,7 @@
 {
-  "pass": 67,
+  "pass": 66,
   "fail": 0,
-  "warn": 0,
+  "warn": 1,
   "total": 67,
   "results": [
     {
@@ -148,7 +148,7 @@
       "role": "admin",
       "section": "✍ create-department",
       "status": "PASS",
-      "detail": "submitted create-department (teacher=Test Faculty)",
+      "detail": "create-department submitted",
       "screenshot": "022-admin-write-create-department.png"
     },
     {
@@ -413,8 +413,8 @@
     {
       "role": "student",
       "section": "✍ semester-enroll",
-      "status": "PASS",
-      "detail": "enrolled with key CSE-2024",
+      "status": "WARN",
+      "detail": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:has-text(",
       "screenshot": "062-student-write-semester-enroll.png"
     },
     {

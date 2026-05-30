@@ -89,7 +89,7 @@ import { FaceRegisterComponent } from '../../../pages/component/face-register/fa
 export class DashboardComponent implements OnInit {
   currentSection: string = 'basic';
   showUserProfileData: any = null;
-  userRole: string | null | undefined;
+  userRole: string | null = null;
   searchQuery!: string;
   searchResults: any;
   isDarkTheme: boolean = false;
@@ -134,18 +134,24 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  // Sections each role's sidebar actually exposes (mirrors the dashboard
+  // template's role gates). Used to reject a stale `currentSection` left in
+  // localStorage by a different role, without blocking legitimate navigation.
+  private sectionsByRole: { [role: string]: string[] } = {
+    student: ['profile', 'change-password', 'chat', 'student-fee', 'attendance-record', 'face-attendance', 'semester', 'our-courses', 'user-schedule', 'join-club', 'id-card', 'assignment', 'model-question', 'sponsorship', 'feedback', 'events', 'discussion', 'academic'],
+    admin: ['user-management', 'search-data', 'admin-fee', 'join-club', 'department', 'admin-schedule', 'enrollment-key', 'list-course', 'our-courses', 'face-register', 'result', 'academic', 'payment', 'events', 'job-vacancy', 'feedback', 'cv-submission', 'sponsorship', 'discussion', 'profile'],
+    secretary: ['profile', 'change-password', 'join-club', 'discussion', 'events'],
+    faculty: ['profile', 'change-password', 'chat', 'our-courses', 'attendance-record', 'face-attendance', 'face-register', 'user-schedule', 'assignment-record', 'model-question', 'academic', 'events', 'feedback', 'internal-records', 'student-work-record', 'discussion'],
+  };
+
   isValidSectionForRole(section: string, role: string | null): boolean {
-    const adminSections = ['user-management', 'admin-fee', 'admin-schedule', 'enrollment-key', 'job-vacancy', 'list-course', 'admin-cv-list'];
-    const teacherSections = ['course-record', 'internal-records', 'model-question', 'assignment-materials', 'student-work'];
-    
-    if (role === 'admin') {
-      return adminSections.includes(section);
-    } else if (role === 'teacher' || role === 'faculty') {
-      return teacherSections.includes(section) || section === 'profile';
-    } else {
-      // Student/other roles
-      return !adminSections.includes(section) && !teacherSections.includes(section);
-    }
+    if (!role) return true;
+    const key = role === 'teacher' ? 'faculty' : role;
+    const allowed = this.sectionsByRole[key];
+    // Roles without a dedicated menu (e.g. finance-officer) only see the
+    // default profile view — don't block their navigation.
+    if (!allowed) return true;
+    return allowed.includes(section);
   }
 
   showSection(section: string): void {
