@@ -1,17 +1,17 @@
 """Build the CampusEase final-defense presentation.
 
-Reproducible: re-run to regenerate campusease_presentation.pptx. Uses the
-institutional template theme for background/fonts, but lays out every slide with
-explicit, controlled geometry (manual title band + body box + fitted images) so
-nothing clips or overlaps. Uses every generated diagram plus the application
-screenshots. Requires python-pptx + Pillow.
+Reproducible: re-run to regenerate campusease_presentation.pptx. Reuses the
+institutional template theme (template_base.pptx) for background/fonts/footer,
+but lays out every slide with explicit, controlled geometry (manual title band +
+body box + fitted images) so nothing clips or overlaps. Structured-approach
+order (Use-Case, ER, DFD). Requires python-pptx + opencv.
 """
 
 from __future__ import annotations
 
 from pathlib import Path
 
-from PIL import Image
+import cv2
 from pptx import Presentation
 from pptx.dml.color import RGBColor
 from pptx.enum.text import MSO_ANCHOR, MSO_AUTO_SIZE, PP_ALIGN
@@ -19,7 +19,7 @@ from pptx.oxml.ns import qn
 from pptx.util import Inches, Pt
 
 BASE = Path(__file__).resolve().parent
-TEMPLATE = Path("/Users/nirajkafle/Desktop/niraj/dev-projects/pocket-drs/dump/BIT Project PPT Sample.pptx")
+TEMPLATE = BASE / "template_base.pptx"   # institutional theme (background/fonts/footer)
 FIG = BASE / "figures"
 OUT = BASE / "campusease_presentation.pptx"
 
@@ -80,8 +80,7 @@ def bullet_slide(title: str, bullets: list[tuple[int, str]]) -> None:
 
 
 def _fit(img: Path, max_w: int, max_h: int) -> tuple[int, int]:
-    with Image.open(img) as im:
-        w, h = im.size
+    h, w = cv2.imread(str(img)).shape[:2]
     ar = w / h
     width, height = max_w, int(max_w / ar)
     if height > max_h:
@@ -115,10 +114,10 @@ def title_slide() -> None:
     tf.word_wrap = True
     tf.vertical_anchor = MSO_ANCHOR.MIDDLE
     rows = [
-        ("CampusEase", 40, True, NAVY, 6),
-        ("A Web-Based College Automation System", 18, False, INK, 0),
-        ("for Academic and Administrative Management", 18, False, INK, 14),
-        ("Bhupendra Malla, BIT (LC0003001648)", 16, False, INK, 2),
+        ("CampusEase", 38, True, NAVY, 6),
+        ("A Web-Based College Automation System for", 17, False, INK, 0),
+        ("Academic and Administrative Management", 17, False, INK, 14),
+        ("Bhupendra Malla, BIT 8th Semester (LC0003001648)", 16, False, INK, 2),
         ("Supervisor: Mr. Saishab Bhattarai", 15, False, INK, 2),
         ("Phoenix College of Management", 15, False, ACCENT, 0),
     ]
@@ -129,6 +128,7 @@ def title_slide() -> None:
         p.space_after = Pt(after)
 
 
+# Drop the template's own slides; keep only its theme/master.
 _sldIdLst = prs.slides._sldIdLst
 for sid in list(_sldIdLst):
     prs.part.drop_rel(sid.get(qn("r:id")))
@@ -137,99 +137,94 @@ for sid in list(_sldIdLst):
 title_slide()
 
 bullet_slide("Introduction", [
-    (0, "Colleges run on many overlapping manual processes: enrollment, attendance, assignments, exams, fees, scheduling, and communication."),
-    (0, "Handled on paper or across disconnected tools, this is slow, error-prone, and hard to track."),
-    (1, "Records get duplicated or lost; attendance and marks are tedious to compile; updates are easy to miss."),
-    (0, "CampusEase brings these activities onto a single web platform with role-based access for students, faculty, secretaries, and administrators."),
-    (0, "Adds modern conveniences: face-recognition attendance, online fee payment, and real-time messaging."),
+    (0, "Colleges run on many disconnected processes: enrollment, attendance, marks, fees, notices, communication."),
+    (0, "Most are still manual or spread across spreadsheets, paper, and separate tools."),
+    (1, "Data is duplicated, hard to track, and slow to act on for students, faculty, and staff."),
+    (0, "CampusEase: a single web platform that centralises academic and administrative operations."),
+    (0, "Role-based portals for students, faculty, secretaries, and administrators with automated services."),
 ])
 
 bullet_slide("Problem Statement", [
-    (0, "Fragmented information: records spread across registers, spreadsheets, and unrelated tools, with no single source of truth."),
-    (0, "Manual, repetitive work: attendance, internal marks, fee reconciliation, and reports done by hand."),
-    (0, "Errors and inconsistency from re-entering the same data in many places, with no audit trail."),
-    (0, "Weak communication: updates reach students through notice boards and informal channels."),
-    (0, "Limited access control: hard to ensure each role sees and does only what it should."),
+    (0, "College operations are fragmented and largely manual:"),
+    (1, "Enrollment, attendance, and marks are tracked by hand or in disconnected files."),
+    (1, "Fee collection lacks a digital, trackable, approval-based workflow."),
+    (1, "Communication (notices, messaging, events) is scattered across channels."),
+    (1, "No single role-aware portal, so each user juggles multiple systems."),
+    (0, "Need: one secure, role-based web system that unifies these workflows and automates routine tasks."),
 ])
 
 bullet_slide("Objectives", [
-    (0, "General: a web-based college automation system centralising academic and administrative operations with role-based services."),
+    (0, "General: a web-based college automation system that centralises academic and administrative operations with role-based, automated services."),
     (0, "Specific objectives:"),
-    (1, "Design a role-based access model for students, faculty, secretaries, and administrators."),
-    (1, "Implement enrollment, scheduling, and academic-record management."),
-    (1, "Provide manual, OTP, and face-recognition attendance."),
+    (1, "Design role-based access control for students, faculty, secretaries, and administrators."),
+    (1, "Implement subject enrollment, class scheduling, and academic-record management."),
+    (1, "Provide manual, OTP, and face-recognition attendance methods."),
     (1, "Automate assignments, marks entry, and internal-marks calculation."),
-    (1, "Integrate online fee payment (Khalti) and real-time communication."),
+    (1, "Integrate secure online fee payment via Khalti with an admin approval workflow."),
+    (1, "Enable real-time messaging, discussion forums, events, and clubs."),
 ])
 
 bullet_slide("Functional Requirements", [
-    (0, "Registration with email verification, authentication, and role-based access."),
-    (0, "Subject enrollment (enrollment keys), class scheduling, and academic records."),
+    (0, "Role-based registration, email/OTP verification, and authentication."),
+    (0, "Subject enrollment via enrollment keys, class scheduling, academic records."),
     (0, "Attendance by manual entry, one-time password, and face recognition."),
-    (0, "Assignment posting and submission, marks entry, and internal-marks calculation."),
-    (0, "Online fee payment via Khalti with administrative approval."),
-    (0, "Real-time messaging, discussions, events, clubs, ID cards, and reports."),
+    (0, "Assignment distribution/submission, marks entry, automatic internal-marks calculation."),
+    (0, "Online fee payment via Khalti with status tracking and admin approval."),
+    (0, "Real-time messaging, discussion forums, events, clubs, job/CV portal, digital ID cards."),
 ])
 
 bullet_slide("Non-functional Requirements", [
-    (0, "Performance: respond within a couple of seconds; deliver messages in real time."),
-    (0, "Usability: intuitive, role-specific interfaces with no special training."),
-    (0, "Security: bcrypt-hashed passwords, JWT-authenticated requests, role-based access."),
-    (0, "Reliability: handle invalid input and unavailable external services gracefully."),
-    (0, "Maintainability and portability: modular code; any Node.js + MongoDB host."),
+    (0, "Performance: respond to typical actions within a few seconds at institution scale."),
+    (0, "Usability: role-specific dashboards usable with basic technical knowledge."),
+    (0, "Security: bcrypt-hashed passwords, JWT auth, role- and department-based access control."),
+    (0, "Reliability: consistent data via Mongoose schemas and validation."),
+    (0, "Maintainability and portability: modular Angular + Express, runs on any Node.js runtime."),
 ])
 
-bullet_slide("Development Methodology", [
-    (0, "Agile, sprint-based development suited to a system of many distinct modules."),
-    (1, "Each sprint delivered working modules: data model, API, Angular screens, then testing."),
-    (0, "Role model and shared user data model were built first, since later features depend on them."),
-    (0, "Git and GitHub used throughout for incremental tracking and continuous integration."),
-])
-
-image_slide("Use-Case Model", [FIG / "use_case_diagram.png"])
+image_slide("Requirement Modeling: Use-Case Diagram", [FIG / "use_case_diagram.png"])
 image_slide("Data Modeling: ER Diagram", [FIG / "er_diagram.png"])
 image_slide("Process Modeling: Data Flow Diagrams",
             [FIG / "dfd_level0.png", FIG / "dfd_level1.png"],
             ["Level 0 (context)", "Level 1"])
 image_slide("System Architecture", [FIG / "architecture.png"])
-image_slide("Key Process Models",
+image_slide("Behavioural Modeling: Activity & Sequence",
             [FIG / "activity_diagram.png", FIG / "sequence_diagram.png"],
-            ["Activity: face attendance", "Sequence: online fee payment"])
-image_slide("System Flowchart", [FIG / "flowchart.png"])
+            ["Activity diagram", "Sequence diagram"])
 
 bullet_slide("Implementing Tools", [
-    (0, "Angular + TypeScript + Bootstrap: single-page, role-specific frontend portals."),
+    (0, "Angular + TypeScript: role-specific single-page frontend portals."),
     (0, "Node.js + Express: REST API; Socket.io for real-time messaging and presence."),
-    (0, "MongoDB + Mongoose: NoSQL document database and object-document mapper."),
+    (0, "MongoDB + Mongoose: document database with schema-based data access."),
     (0, "JWT + bcrypt: stateless authentication and one-way password hashing."),
-    (0, "Khalti (payment), Nodemailer (email/OTP), Multer (uploads), Highcharts (dashboards)."),
+    (0, "Multer (uploads), Nodemailer (verification/OTP email), Highcharts (dashboards)."),
+    (0, "Khalti: external gateway for online fee payment. Git/GitHub, VS Code, Angular CLI."),
 ])
 
 bullet_slide("Implementation: Module Details", [
-    (0, "Authentication & Role: registration, email verify, login, JWT, role/department checks."),
-    (0, "Academic: enrollment by key, class scheduling, academic records."),
-    (0, "Attendance: manual, OTP, and face-recognition (webcam capture and matching)."),
-    (0, "Assignments & Marks: posting/submission, marks entry, automatic internal-marks calc."),
-    (0, "Fee Payment: Khalti online payment with admin approval workflow."),
-    (0, "Communication & Admin: real-time chat, discussions, events, clubs, user management."),
+    (0, "Authentication & Role: registration, email verification, JWT login, RBAC middleware by role/department."),
+    (0, "Academic: enrollment-key based subject enrollment, class scheduling, academic records."),
+    (0, "Attendance: manual roll, short-lived OTP, and webcam face-recognition matching."),
+    (0, "Assignments & Marks: post/submit assignments, marks entry, automatic internal-marks calculation."),
+    (0, "Fee Payment: Khalti-initiated online payment, receipt + status, admin/finance approval."),
+    (0, "Communication & Admin: Socket.io messaging, forums/events/clubs, user/department management, job-CV portal, digital ID cards."),
 ])
 
-image_slide("Application Demo",
-            [FIG / "app_admin_dashboard.png", FIG / "app_user_management.png"],
-            ["Admin console", "User management"])
-
-bullet_slide("Testing", [
-    (0, "Tested module by module, then end to end through the UI for each role."),
-    (0, "Unit tests: auth/JWT/role checks, enrollment, attendance, internal-marks, fee, messaging."),
-    (0, "System tests: register-verify-login, attendance by face/OTP, assignment flow, fee pay+approve, real-time chat, user management."),
-    (0, "All unit and system test cases passed; role-based access reliably allowed/denied actions."),
+bullet_slide("Key Workflows", [
+    (0, "Role-based access control: JWT carries role + department; middleware gates every endpoint."),
+    (0, "Khalti payment: frontend -> backend initiate -> Khalti checkout -> return callback -> lookup verify -> fee marked Paid."),
+    (0, "Internal marks: assignment marks + attendance marks combined into a computed internal score."),
+    (0, "Attendance OTP: server issues a 5-minute code; student submits it (with location) to mark present."),
 ])
+
+image_slide("Application Demo: Admin Dashboard", [FIG / "app_admin_dashboard.png"])
+image_slide("Application Demo: User Management", [FIG / "app_user_management.png"])
 
 bullet_slide("Conclusion", [
-    (0, "A complete, working platform unifying academics, administration, and communication for a college."),
-    (0, "Role-based access, three attendance methods, automatic internal marks, online fee payment, and real-time messaging."),
-    (0, "Built on Angular + Node/Express + Socket.io + MongoDB, secured with JWT and bcrypt; all test cases passed."),
-    (0, "Future work: mobile app, push notifications, advanced analytics, scalable deployment, more payment options."),
+    (0, "A complete, working platform unifying enrollment, attendance, assignments, marks, fees, and communication."),
+    (0, "Role-based portals, three attendance methods, automatic internal marks, and verified Khalti online payment."),
+    (0, "Real-time messaging and engagement features, with secure JWT auth and per-role access control."),
+    (0, "All unit and system test cases passed; end-to-end tested across every role."),
+    (0, "Future work: real-time analytics, mobile app, ML-based insights, and multi-campus scaling."),
 ])
 
 prs.save(str(OUT))
