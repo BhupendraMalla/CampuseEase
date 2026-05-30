@@ -79,7 +79,9 @@ Then open **http://localhost:4200** and log in with any account below.
 
 ## Test credentials (seeded)
 
-`npm run seed` creates one ready-to-use, **pre-verified** account per primary role:
+All accounts live **in the database**, created by `npm run seed` — credentials
+are **never** read from `.env` (which only holds infra secrets: Mongo URI, JWT
+secret, Khalti keys). Each account is **pre-verified** and ready to log in:
 
 | Role            | Email                       | Password       |
 |-----------------|-----------------------------|----------------|
@@ -89,10 +91,15 @@ Then open **http://localhost:4200** and log in with any account below.
 | Secretary       | `secretary@campusease.com`  | `secretary123` |
 | Finance Officer | `finance@campusease.com`    | `finance123`   |
 
-It also seeds:
-- a **Department** — `academic` / *Computer Engineering* (HOD: Test Faculty)
-- a **Semester enrollment** with key **`CSE-2024`** (semester 1, 3 subjects taught by `faculty@campusease.com`).
-  As a student, go to **Semester Enroll → enter `CSE-2024` → Enroll Now** to load courses.
+`npm run seed` also fully populates the DB (idempotent, non-destructive):
+- **Department** — `academic` / *Computer Engineering* (HOD: Test Faculty)
+- **Semester enrollment** key **`CSE-2024`** (semester 1, 3 subjects). As a
+  student: **Semester Enroll → enter `CSE-2024` → Enroll Now**.
+- Demo **events, club, job vacancy, class schedule, model question, assignment,
+  academic record, discussion, feedback, sponsorship, internal marks**, and
+  **fees** (one Paid, one Pending) — so every feature has visible data.
+- **Khalti sandbox payment** test login (on the Khalti page): Khalti ID
+  `9800000000`, MPIN `1111`, OTP `987654`.
 
 > Self-registration via `/signup` creates an account with `isVerified = false`.
 > New users must be approved by an admin (User Management → verify) before they can log in.

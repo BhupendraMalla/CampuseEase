@@ -55,8 +55,8 @@ router.post('/postGiveAssignments', verifyToken, upload.single('assignmentFile')
     // Extract the emails of enrolled students
     const studentEmails = enrolledStudents.map(s => s.userEmail);
 
-    // Send email only to enrolled students
-    if (studentEmails.length > 0) {
+    // Notify enrolled students by email — best effort, never blocks creation.
+    if (studentEmails.length > 0 && process.env.EMAIL_USER && process.env.EMAIL_PASS) {
       const mailOptions = {
         from: process.env.EMAIL_USER,
         to: studentEmails,
@@ -70,8 +70,7 @@ router.post('/postGiveAssignments', verifyToken, upload.single('assignmentFile')
           <p><a href="http://localhost:3200/uploads/${filename}">Download Assignment File</a></p>
         `
       };
-
-      await transporter.sendMail(mailOptions);
+      transporter.sendMail(mailOptions).catch(e => console.error('Assignment email failed (non-fatal):', e.message));
     }
 
     res.status(201).json(savedAssignment);

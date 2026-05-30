@@ -49,36 +49,28 @@ router.post('/submit-model-question', verifyToken, upload.single('file'), async 
 
     const savedModelQuestion = await newModelQuestion.save();
 
-    // Find all students
-    const students = await Signup.find({ role: 'student' });
-    if (!students.length) {
-      return res.status(404).json({ message: 'No students found to send email' });
+    // Notify students by email — best effort, never blocks creation.
+    let emailedCount = 0;
+    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+      try {
+        const students = await Signup.find({ role: 'student' });
+        const filePath = path.join(__dirname, '../uploads', filename);
+        const fileContent = await fs.readFile(filePath);
+        await Promise.all(students.map(student => transporter.sendMail({
+          from: process.env.EMAIL_USER,
+          to: student.email,
+          subject: `New Model Question Uploaded - Subject: ${subject}`,
+          text: `A new model question has been uploaded.\n\nSubject: ${subject}\nDescription: ${model_question}`,
+          attachments: [{ filename: file.originalname, content: fileContent }]
+        })));
+        emailedCount = students.length;
+      } catch (mailErr) {
+        console.error('Model question email failed (non-fatal):', mailErr.message);
+      }
     }
 
-    // Read uploaded file content
-    const filePath = path.join(__dirname, '../uploads', filename);
-    const fileContent = await fs.readFile(filePath);
-
-    // Send email to all students
-    const emailPromises = students.map(student => {
-      return transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: student.email,
-        subject: `New Model Question Uploaded - Subject: ${subject}`,
-        text: `A new model question has been uploaded.\n\nSubject: ${subject}\nDescription: ${model_question}`,
-        attachments: [
-          {
-            filename: file.originalname,
-            content: fileContent
-          }
-        ]
-      });
-    });
-
-    await Promise.all(emailPromises);
-
     res.status(201).json({
-      message: `Model question uploaded and emailed to ${students.length} students`,
+      message: emailedCount ? `Model question uploaded and emailed to ${emailedCount} students` : 'Model question uploaded',
       data: savedModelQuestion
     });
   } catch (err) {
