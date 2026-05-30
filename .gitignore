@@ -47,4 +47,13 @@ admin-user-mgmt.png
 
 # E2E raw recording (keep the campusease-demo.mp4 deliverable + screenshots + report)
 e2e/artifacts/video/
+e2e/artifacts/.raw-video/
 e2e/artifacts/*.webm
+
+# LaTeX build artifacts in docs/report (keep .tex / .pdf / .pptx / figures)
+docs/report/*.aux
+docs/report/*.lof
+docs/report/*.log
+docs/report/*.lot
+docs/report/*.out
+docs/report/*.toc

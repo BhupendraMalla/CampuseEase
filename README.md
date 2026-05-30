@@ -188,6 +188,10 @@ CampuseEase/
 See [`docs/`](docs/): `API_DOCUMENTATION.md`, `ROLE_BASED_ACCESS_GUIDE.md`,
 `QUICK_START_SETUP.md`, `TROUBLESHOOTING_GUIDE.md`.
 
+Project report & slides live in [`docs/report/`](docs/report/) —
+`CampusEase-final-report.pdf`, `campusease_report.tex` (source),
+`campusease_presentation.pptx`, and the `figures/` used in the report.
+
 ---
 
 ## Environment variables
