@@ -291,13 +291,15 @@ entity "Message" as Msg {
 }
 
 ' Crow's-foot cardinalities (Information Engineering)
-User ||--o{ Att    : records
-User ||--o{ Ans    : submits
-User ||--o{ Fee    : pays
-User ||--o{ Marks  : receives
-User ||--o{ Msg    : sends
-Enroll ||--o{ Give : groups
-Give ||--o{ Ans    : answered by
+User   }o--o{ Enroll : enrolls in
+User   ||--o{ Att    : records
+User   ||--o{ Give   : posts
+User   ||--o{ Ans    : submits
+User   ||--o{ Marks  : enters
+User   ||--o{ Marks  : receives
+User   ||--o{ Fee    : pays
+User   ||--o{ Msg    : sends
+Give   ||--o{ Ans    : answered by
 @enduml
 """
 
@@ -384,6 +386,12 @@ DFD1 = _HEAD.format(rankdir="TB") + """
 # 6. Sequence diagram -- online fee payment via Khalti
 # ---------------------------------------------------------------------------
 SEQUENCE_PUML = """@startuml
+<style>
+lifeLine {
+  LineStyle 2-4
+  LineColor black
+}
+</style>
 skinparam monochrome true
 skinparam shadowing false
 skinparam DefaultFontName Helvetica

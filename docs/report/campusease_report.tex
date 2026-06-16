@@ -86,6 +86,8 @@
 \begin{titlepage}
 \begin{center}
 
+\vspace*{\stretch{0.9}}
+
 \textbf{\fontsize{14}{17}\selectfont Lincoln University College}\\[4pt]
 \textbf{\fontsize{12}{15}\selectfont Faculty of Computer Science and Multimedia}\\[26pt]
 
@@ -111,8 +113,9 @@ Under the Supervision of\\[4pt]
 \textbf{Mr. Saishab Bhattarai}\\
 Project Supervisor\\[18pt]
 
-\vfill
+\vspace{\stretch{1.1}}
 \textbf{May, 2026}
+\vspace*{\stretch{0.6}}
 
 \end{center}
 \end{titlepage}
@@ -213,7 +216,7 @@ University ID: LC0003001648
 Colleges run on a large number of overlapping manual processes: enrollment, attendance, assignments, examinations, fee collection, scheduling, and day-to-day communication between students, faculty, and administrative staff. Handling these on paper and across disconnected tools is slow, error-prone, and difficult to track. CampusEase is a web-based college automation system that brings these activities together on a single platform. It provides role-based access for students, faculty, secretaries, and administrators; supports subject enrollment and class scheduling; records attendance manually, through a one-time password, or through face recognition; manages assignment distribution and submission, internal marks entry, and automatic internal-marks calculation; and integrates online fee payment through the Khalti gateway with an administrative approval workflow. Real-time messaging, discussion forums, events, clubs, a job-and-CV portal, sponsorship requests, and digital ID-card generation are also included. The system is built with an Angular single-page frontend, a Node.js and Express REST API with Socket.io for real-time features, and a MongoDB database accessed through the Mongoose object-document mapper, with JWT authentication and bcrypt password hashing. The result is a reliable, easy-to-use platform that reduces administrative workload, minimizes errors, and improves transparency and communication across the academic community.
 
 \vspace{0.6cm}
-\noindent\textbf{Keywords:} College Automation, Student Information System, Role-Based Access Control, Face Recognition Attendance, Online Fee Payment, Real-Time Communication.
+\noindent\textbf{Keywords:} College Automation, Role-Based Access Control, Face Recognition Attendance, Online Fee Payment, Real-Time Communication.
 
 \clearpage
 
@@ -306,14 +309,9 @@ To design and develop a web-based college automation system that centralizes aca
 \subsection{Specific Objectives}
 
 \begin{itemize}
-    \item To study existing college automation, student information, and learning management systems and identify their limitations.
-    \item To design a role-based access control model covering students, faculty, secretaries, and administrators.
-    \item To implement subject enrollment, class scheduling, and academic-record management.
-    \item To provide multiple attendance methods, including manual, one-time-password, and face-recognition attendance.
-    \item To automate assignment distribution and submission, marks entry, and internal-marks calculation.
-    \item To integrate secure online fee payment through the Khalti gateway with an administrative approval workflow.
-    \item To enable real-time communication through messaging, discussion forums, events, and clubs.
-    \item To ensure the system is secure, usable, and accessible to users with basic technical knowledge.
+    \item To design and implement a secure, role-based platform that centralizes core academic operations, including subject enrollment, class scheduling, attendance through manual, one-time-password, and face-recognition methods, and automatic internal-marks calculation.
+    \item To integrate secure online fee payment through the Khalti gateway with an administrative approval workflow, together with real-time communication through messaging, discussion forums, events, and clubs.
+    \item To ensure the system is reliable, usable, and accessible to students, faculty, and administrative staff with basic technical knowledge.
 \end{itemize}
 
 \section{Significance of the Study}
@@ -352,7 +350,15 @@ The project was developed using an Agile methodology based on short, iterative s
 
 \section{Report Organization}
 
-The remainder of this report is organized as follows. Chapter 2 reviews college automation concepts and existing systems and positions CampusEase against them. Chapter 3 presents the system analysis and design, including the feasibility study, requirements, use-case and data models, data flow diagrams, and system design. Chapter 4 describes the implementation of each module and the testing approach and results. Chapter 5 concludes the report and discusses lessons learned and future enhancements.
+This report is organized into five chapters:
+
+\begin{itemize}
+    \item \textbf{Chapter 1: Introduction} presents the background, problem statement, objectives, significance, scope and limitations, development methodology, and the organization of the report.
+    \item \textbf{Chapter 2: Background Study and Literature Review} reviews college automation concepts and existing systems and positions CampusEase against them.
+    \item \textbf{Chapter 3: System Analysis and Design} presents the feasibility study, requirements, use-case and data models, data flow diagrams, and system design.
+    \item \textbf{Chapter 4: Implementation and Testing} describes the implementation of each module and the testing approach and results.
+    \item \textbf{Chapter 5: Conclusion and Future Recommendations} concludes the report and discusses lessons learned and future enhancements.
+\end{itemize}
 
 % =====================================================================
 % CHAPTER 2: BACKGROUND STUDY AND LITERATURE REVIEW
@@ -529,7 +535,7 @@ The use-case diagram in Figure~\ref{fig:usecase} shows the main actors, students
 
 \subsection{Data Modelling: Entity-Relationship Diagram}
 
-The data model is stored as MongoDB collections accessed through Mongoose. The core entities are \code{User}, \code{EnrollmentSubjects}, \code{Attendance}, \code{GiveAssignment}, \code{AnswerAssignment}, \code{MarksEntry}, \code{Fee}, and \code{Message}. A user owns many attendance records, assignment submissions, fee payments, marks, and messages; an enrollment groups the assignments for its subjects; and each posted assignment is answered by many submissions. Figure~\ref{fig:er} shows the entity-relationship diagram.
+The data model is stored as MongoDB collections accessed through Mongoose. The core entities are \code{User}, \code{EnrollmentSubjects}, \code{Attendance}, \code{GiveAssignment}, \code{AnswerAssignment}, \code{MarksEntry}, \code{Fee}, and \code{Message}. A student enrolls in the subjects defined by an \code{EnrollmentSubjects} record; a faculty user posts assignments and enters student marks; a user owns many attendance records, assignment submissions, fee payments, marks, and messages; and each posted assignment is answered by many submissions. Figure~\ref{fig:er} shows the entity-relationship diagram.
 
 \begin{figure}[H]
     \centering
