@@ -535,7 +535,7 @@ The use-case diagram in Figure~\ref{fig:usecase} shows the main actors, students
 
 \subsection{Data Modelling: Entity-Relationship Diagram}
 
-The data model is stored as MongoDB collections accessed through Mongoose. The core entities are \code{User}, \code{EnrollmentSubjects}, \code{Attendance}, \code{GiveAssignment}, \code{AnswerAssignment}, \code{MarksEntry}, \code{Fee}, and \code{Message}. A student enrolls in the subjects defined by an \code{EnrollmentSubjects} record; a faculty user posts assignments and enters student marks; a user owns many attendance records, assignment submissions, fee payments, marks, and messages; and each posted assignment is answered by many submissions. Figure~\ref{fig:er} shows the entity-relationship diagram.
+The data model is stored as MongoDB collections accessed through Mongoose. The core entities are \code{User}, \code{EnrollmentSubjects}, \code{Attendance}, \code{GiveAssignment}, \code{AnswerAssignment}, \code{MarksEntry}, \code{Fee}, and \code{Message}. A user owns many attendance records, assignment submissions, fee payments, marks, and messages; an enrollment groups the assignments for its subjects; and each posted assignment is answered by many submissions. Figure~\ref{fig:er} shows the entity-relationship diagram.
 
 \begin{figure}[H]
     \centering
