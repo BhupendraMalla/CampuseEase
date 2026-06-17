@@ -55,8 +55,8 @@ def datastore(dn: str, name: str) -> str:
     return (
         '<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6">'
         '<TR>'
-        f'<TD SIDES="TB" BORDER="1" BGCOLOR="white"><B>{dn}</B></TD>'
-        f'<TD SIDES="TBR" BORDER="1" BGCOLOR="white">{name}</TD>'
+        f'<TD SIDES="TB" BORDER="1" BGCOLOR="#eef7ee"><B>{dn}</B></TD>'
+        f'<TD SIDES="TBL" BORDER="1" BGCOLOR="#eef7ee">{name}</TD>'
         '</TR></TABLE>>'
     )
 
@@ -307,16 +307,15 @@ Give   ||--o{ Ans    : answered by
 # 4. DFD Level 0 (context) -- Gane-Sarson
 # ---------------------------------------------------------------------------
 DFD0 = _HEAD.format(rankdir="LR") + """
-  // External entities: plain rectangles
-  node [shape=box, style="filled", fillcolor="white", color="black"];
-  student [label="Student /\\nFaculty"];
-  admin   [label="Admin /\\nSecretary"];
-  khalti  [label="Khalti\\nGateway"];
-  email   [label="Email\\nService"];
+  node [fontsize=11];
+  // External entities: plain rectangles (users blue, third-party services pink)
+  student [shape=box, style=filled, fillcolor="#eef2fb", color="#5b7fbd", label="Student /\\nFaculty"];
+  admin   [shape=box, style=filled, fillcolor="#eef2fb", color="#5b7fbd", label="Admin /\\nSecretary"];
+  khalti  [shape=box, style=filled, fillcolor="#fde8e8", color="#cf8d8d", label="Khalti\\nGateway"];
+  email   [shape=box, style=filled, fillcolor="#fde8e8", color="#cf8d8d", label="Email\\nService"];
 
-  // Process: rounded rectangle, numbered (0 = context)
-  proc [shape=box, style="rounded,filled", fillcolor="white",
-        label="0\\n\\nCampusEase", width=2.0, height=1.2];
+  // Context process: numbered Gane-Sarson process (number | name split)
+  proc [shape=Mrecord, style=filled, fillcolor="#eef2fb", color="#5b7fbd", label="{ 0 | CampusEase }"];
 
   student -> proc [label="credentials, assignments,\\nattendance, fee requests"];
   proc -> student [label="schedules, marks,\\nrecords, notifications"];
@@ -332,20 +331,19 @@ DFD0 = _HEAD.format(rankdir="LR") + """
 # 5. DFD Level 1 -- Gane-Sarson
 # ---------------------------------------------------------------------------
 DFD1 = _HEAD.format(rankdir="TB") + """
-  // External entities
-  node [shape=box, style="filled", fillcolor="white", color="black"];
-  user   [label="Student / Faculty"];
-  admin  [label="Admin / Secretary"];
-  khalti [label="Khalti Gateway"];
+  node [fontsize=11];
+  // External entities (users blue, third-party services pink)
+  user   [shape=box, style=filled, fillcolor="#eef2fb", color="#5b7fbd", label="Student / Faculty"];
+  admin  [shape=box, style=filled, fillcolor="#eef2fb", color="#5b7fbd", label="Admin / Secretary"];
+  khalti [shape=box, style=filled, fillcolor="#fde8e8", color="#cf8d8d", label="Khalti Gateway"];
 
-  // Processes: numbered rounded rectangles
-  node [shape=box, style="rounded,filled", fillcolor="white", color="black"];
-  p1 [label="1\\n\\nAuthenticate &\\nAuthorize", width=1.7, height=1.0];
-  p2 [label="2\\n\\nManage\\nAcademics", width=1.7, height=1.0];
-  p3 [label="3\\n\\nRecord\\nAttendance", width=1.7, height=1.0];
-  p4 [label="4\\n\\nManage Assignments\\n& Marks", width=1.7, height=1.0];
-  p5 [label="5\\n\\nProcess Fee\\nPayment", width=1.7, height=1.0];
-  p6 [label="6\\n\\nCommunication\\n& Engagement", width=1.7, height=1.0];
+  // Processes: numbered Gane-Sarson processes (number | name split)
+  p1 [shape=Mrecord, style=filled, fillcolor="#eef2fb", color="#5b7fbd", label="{ 1 | Authenticate and Authorize }"];
+  p2 [shape=Mrecord, style=filled, fillcolor="#eef2fb", color="#5b7fbd", label="{ 2 | Manage Academics }"];
+  p3 [shape=Mrecord, style=filled, fillcolor="#eef2fb", color="#5b7fbd", label="{ 3 | Record Attendance }"];
+  p4 [shape=Mrecord, style=filled, fillcolor="#eef2fb", color="#5b7fbd", label="{ 4 | Manage Assignments and Marks }"];
+  p5 [shape=Mrecord, style=filled, fillcolor="#eef2fb", color="#5b7fbd", label="{ 5 | Process Fee Payment }"];
+  p6 [shape=Mrecord, style=filled, fillcolor="#eef2fb", color="#5b7fbd", label="{ 6 | Communication and Engagement }"];
 
   // Data stores: open-ended Gane-Sarson glyph
   node [shape=plaintext, style="", fillcolor="white"];
