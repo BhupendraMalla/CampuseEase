@@ -55,7 +55,7 @@ def datastore(dn: str, name: str) -> str:
     return (
         '<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6">'
         '<TR>'
-        f'<TD SIDES="TB" BORDER="1" BGCOLOR="#eef4ff"><B>{dn}</B></TD>'
+        f'<TD SIDES="TB" BORDER="1" BGCOLOR="white"><B>{dn}</B></TD>'
         f'<TD SIDES="TBR" BORDER="1" BGCOLOR="white">{name}</TD>'
         '</TR></TABLE>>'
     )
@@ -65,13 +65,13 @@ def datastore(dn: str, name: str) -> str:
 # 1. Layered system architecture
 # ---------------------------------------------------------------------------
 ARCHITECTURE = _HEAD.format(rankdir="TB") + """
-  node [shape=box, style="rounded,filled", fillcolor="#eef4ff"];
+  node [shape=box, style="rounded,filled", fillcolor="white"];
   compound=true;
   nodesep=0.35; ranksep=0.55;
 
   subgraph cluster_client {
     label="Presentation Layer (Angular 17 SPA, Browser)";
-    style="rounded,filled"; fillcolor="#f7f9fc"; fontsize=12;
+    style="rounded,filled"; fillcolor="white"; fontsize=12;
     ui_student [label="Student Portal"];
     ui_faculty [label="Faculty Portal"];
     ui_admin [label="Admin / Secretary\\nConsole"];
@@ -80,7 +80,7 @@ ARCHITECTURE = _HEAD.format(rankdir="TB") + """
 
   subgraph cluster_api {
     label="Application Layer (Node.js / Express 5 REST API + Socket.io)";
-    style="rounded,filled"; fillcolor="#f7f9fc"; fontsize=12;
+    style="rounded,filled"; fillcolor="white"; fontsize=12;
     api_auth [label="Auth & RBAC API\\n(signup / signin)"];
     api_acad [label="Academic API\\n(enroll / schedule / marks)"];
     api_att [label="Attendance API\\n(manual / face / OTP)"];
@@ -90,7 +90,7 @@ ARCHITECTURE = _HEAD.format(rankdir="TB") + """
 
   subgraph cluster_logic {
     label="Business Logic Layer";
-    style="rounded,filled"; fillcolor="#fff4e6"; fontsize=12;
+    style="rounded,filled"; fillcolor="white"; fontsize=12;
     jwt [label="JWT Auth &\\nRole Middleware"];
     face [label="Face-Recognition\\nService"];
     marks [label="Internal-Marks\\nCalculator"];
@@ -101,14 +101,14 @@ ARCHITECTURE = _HEAD.format(rankdir="TB") + """
 
   subgraph cluster_data {
     label="Data Layer";
-    style="rounded,filled"; fillcolor="#e9f7ef"; fontsize=12;
+    style="rounded,filled"; fillcolor="white"; fontsize=12;
     odm [label="Mongoose ODM"];
-    db [label="MongoDB", shape=cylinder, fillcolor="#d4efdf"];
+    db [label="MongoDB", shape=cylinder, fillcolor="white"];
   }
 
   subgraph cluster_ext {
     label="External Services";
-    style="rounded,filled"; fillcolor="#fdedec"; fontsize=12;
+    style="rounded,filled"; fillcolor="white"; fontsize=12;
     khalti [label="Khalti\\nPayment Gateway"];
     smtp [label="SMTP\\n(Nodemailer)"];
   }
@@ -291,13 +291,15 @@ entity "Message" as Msg {
 }
 
 ' Crow's-foot cardinalities (Information Engineering)
-User ||--o{ Att    : records
-User ||--o{ Ans    : submits
-User ||--o{ Fee    : pays
-User ||--o{ Marks  : receives
-User ||--o{ Msg    : sends
-Enroll ||--o{ Give : groups
-Give ||--o{ Ans    : answered by
+User   }o--o{ Enroll : enrolls in
+User   ||--o{ Att    : records
+User   ||--o{ Give   : posts
+User   ||--o{ Ans    : submits
+User   ||--o{ Marks  : enters
+User   ||--o{ Marks  : receives
+User   ||--o{ Fee    : pays
+User   ||--o{ Msg    : sends
+Give   ||--o{ Ans    : answered by
 @enduml
 """
 
@@ -313,7 +315,7 @@ DFD0 = _HEAD.format(rankdir="LR") + """
   email   [label="Email\\nService"];
 
   // Process: rounded rectangle, numbered (0 = context)
-  proc [shape=box, style="rounded,filled", fillcolor="#eef4ff",
+  proc [shape=box, style="rounded,filled", fillcolor="white",
         label="0\\n\\nCampusEase", width=2.0, height=1.2];
 
   student -> proc [label="credentials, assignments,\\nattendance, fee requests"];
@@ -337,7 +339,7 @@ DFD1 = _HEAD.format(rankdir="TB") + """
   khalti [label="Khalti Gateway"];
 
   // Processes: numbered rounded rectangles
-  node [shape=box, style="rounded,filled", fillcolor="#eef4ff", color="black"];
+  node [shape=box, style="rounded,filled", fillcolor="white", color="black"];
   p1 [label="1\\n\\nAuthenticate &\\nAuthorize", width=1.7, height=1.0];
   p2 [label="2\\n\\nManage\\nAcademics", width=1.7, height=1.0];
   p3 [label="3\\n\\nRecord\\nAttendance", width=1.7, height=1.0];
@@ -456,25 +458,25 @@ stop
 # 8. Flowchart -- overall control / data flow
 # ---------------------------------------------------------------------------
 FLOWCHART = _HEAD.format(rankdir="TB") + """
-  node [shape=box, style="rounded,filled", fillcolor="#eef4ff"];
+  node [shape=box, style="rounded,filled", fillcolor="white"];
 
-  start [shape=oval, fillcolor="#dfe7f5", label="User accesses\\nCampusEase"];
-  auth [shape=diamond, fillcolor="#fff4e6", label="Authenticated?"];
+  start [shape=oval, fillcolor="white", label="User accesses\\nCampusEase"];
+  auth [shape=diamond, fillcolor="white", label="Authenticated?"];
   login [label="Sign in / Register\\n(email verify, OTP)"];
-  role [shape=diamond, fillcolor="#fff4e6", label="Role?"];
+  role [shape=diamond, fillcolor="white", label="Role?"];
 
   student [label="Student portal:\\nenroll, attendance,\\nassignments, fees,\\nmarks, chat"];
   faculty [label="Faculty portal:\\nschedule, attendance,\\nassignments, marks,\\nmodel questions"];
   admin [label="Admin / Secretary:\\nuser mgmt, fee approval,\\ndepartments, events,\\nID cards, reports"];
 
   action [label="Perform action\\n(REST API call)"];
-  authz [shape=diamond, fillcolor="#fff4e6", label="Role permitted?"];
-  deny [label="Reject (403)", fillcolor="#fdedec"];
+  authz [shape=diamond, fillcolor="white", label="Role permitted?"];
+  deny [label="Reject (403)", fillcolor="white"];
   persist [label="Validate & persist\\nvia Mongoose / MongoDB"];
-  realtime [shape=diamond, fillcolor="#fff4e6", label="Real-time\\nupdate?"];
+  realtime [shape=diamond, fillcolor="white", label="Real-time\\nupdate?"];
   emit [label="Emit via Socket.io\\n(chat / notification)"];
   respond [label="Update UI &\\ndashboards"];
-  end [shape=oval, fillcolor="#dfe7f5", label="End"];
+  end [shape=oval, fillcolor="white", label="End"];
 
   start -> auth;
   auth -> login [label="No"];
