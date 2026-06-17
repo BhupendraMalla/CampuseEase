@@ -406,18 +406,18 @@ actor "Admin /\\nFinance Officer" as Admin
 
 Student -> SPA : select fee, click Pay
 SPA -> Khalti : initiate payment (amount)
-Khalti --> SPA : payment token (success)
+Khalti -->> SPA : payment token (success)
 SPA -> API : POST /payFee {amount, token}
 API -> DB : insert Fee (status = Pending)
-DB --> API : receiptNumber
-API --> SPA : payment recorded
-SPA --> Student : show receipt
+DB -->> API : receiptNumber
+API -->> SPA : payment recorded
+SPA -->> Student : show receipt
 
 == Approval ==
 Admin -> API : PATCH /approveFee/:id
 API -> DB : update status = Paid
-DB --> API : ok
-API --> Admin : confirmation
+DB -->> API : ok
+API -->> Admin : confirmation
 @enduml
 """
 
