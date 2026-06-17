@@ -899,29 +899,129 @@ module.exports = { verifyToken, verifyRole };
 \clearpage
 \addcontentsline{toc}{section}{Appendix C: Project Log Book}
 
-\newcommand{\logsheetpage}[1]{%
-\thispagestyle{plain}\begingroup\singlespacing\setlength{\parskip}{0pt}%
+\newcommand{\logsheet}[8]{%
+\thispagestyle{plain}\begingroup\singlespacing\setlength{\parskip}{3pt}%
 \begin{center}\textbf{\fontsize{14}{17}\selectfont Project Log Book Entry Sheet}\end{center}
-\vspace{0.3cm}
-\noindent\begin{minipage}[t]{0.52\textwidth}Meeting No.: \dotfill\end{minipage}\hfill\begin{minipage}[t]{0.42\textwidth}Date: \dotfill\end{minipage}\par
-\vspace{12pt}\noindent\begin{minipage}[t]{0.52\textwidth}Start Time: \dotfill\end{minipage}\hfill\begin{minipage}[t]{0.42\textwidth}Finish Time: \dotfill\end{minipage}\par
-\vspace{16pt}\noindent\textbf{Discussion Topics:}\par
-\vspace{8pt}1.~\dotfill\par\vspace{10pt}2.~\dotfill\par\vspace{10pt}3.~\dotfill\par\vspace{10pt}4.~\dotfill\par
-\vspace{14pt}\noindent\textbf{Achievements:}\par
-\vspace{8pt}1.~\dotfill\par\vspace{10pt}2.~\dotfill\par\vspace{10pt}3.~\dotfill\par\vspace{10pt}4.~\dotfill\par
-\vspace{14pt}\noindent\textbf{Problems (if any):}\par
-\vspace{8pt}1.~\dotfill\par\vspace{10pt}2.~\dotfill\par\vspace{10pt}3.~\dotfill\par\vspace{10pt}4.~\dotfill\par
-\vspace{14pt}\noindent\textbf{Task for next meeting:}\par
-\vspace{8pt}1.~\dotfill\par\vspace{10pt}2.~\dotfill\par\vspace{10pt}3.~\dotfill\par\vspace{10pt}4.~\dotfill\par
-\vspace{16pt}\noindent\rule{\textwidth}{0.4pt}\par
-\vspace{8pt}\noindent\begin{minipage}[t]{0.55\textwidth}Student Name: #1\\[16pt]Signature: \dotfill\end{minipage}\hfill\begin{minipage}[t]{0.4\textwidth}\centering Mentor Signature\\[22pt]\dotfill\end{minipage}\par
+\vspace{0.2cm}
+\noindent\begin{minipage}[t]{0.52\textwidth}Meeting No.: #1\end{minipage}\hfill\begin{minipage}[t]{0.42\textwidth}Date: #2\end{minipage}\par
+\vspace{6pt}\noindent\begin{minipage}[t]{0.52\textwidth}Start Time: #3\end{minipage}\hfill\begin{minipage}[t]{0.42\textwidth}Finish Time: #4\end{minipage}\par
+\vspace{8pt}\noindent\textbf{Discussion Topics:}
+\begin{enumerate}\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}\setlength{\topsep}{2pt}#5\end{enumerate}
+\noindent\textbf{Achievements:}
+\begin{enumerate}\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}\setlength{\topsep}{2pt}#6\end{enumerate}
+\noindent\textbf{Problems (if any):}
+\begin{enumerate}\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}\setlength{\topsep}{2pt}#7\end{enumerate}
+\noindent\textbf{Task for next meeting:}
+\begin{enumerate}\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}\setlength{\topsep}{2pt}#8\end{enumerate}
+\vspace{8pt}\noindent\rule{\textwidth}{0.4pt}\par
+\vspace{6pt}\noindent\begin{minipage}[t]{0.55\textwidth}Student Name: Bhupendra Malla\\[14pt]Signature: \dotfill\end{minipage}\hfill\begin{minipage}[t]{0.4\textwidth}\centering Mentor Signature\\[20pt]\dotfill\end{minipage}\par
 \endgroup\clearpage}
 
-\logsheetpage{Bhupendra Malla}
-\logsheetpage{Bhupendra Malla}
-\logsheetpage{Bhupendra Malla}
-\logsheetpage{Bhupendra Malla}
-\logsheetpage{Bhupendra Malla}
+\logsheet{01}{22/11/2025}{9:00 AM}{10:00 AM}
+{\item Introduction to final year project requirements and evaluation criteria
+ \item Project phases, deadlines, and submission milestones
+ \item Overview of the report chapters: Introduction, Literature Review, System Analysis and Design, Implementation and Testing, and Conclusion
+ \item IEEE format, abstract writing, and reference guidelines}
+{\item Understood the complete project roadmap
+ \item Received the project guideline document}
+{\item None}
+{\item Brainstorm and shortlist project ideas}
+
+\logsheet{02}{29/11/2025}{9:00 AM}{10:00 AM}
+{\item Presented the shortlisted project ideas
+ \item Finalized ``CampusEase: a web-based college automation system''
+ \item Discussed the problem statement, objectives, and significance}
+{\item Project title approved by the supervisor
+ \item Problem statement and objectives drafted}
+{\item None}
+{\item Write the Introduction chapter
+ \item Carry out the feasibility study}
+
+\logsheet{03}{13/12/2025}{9:00 AM}{10:00 AM}
+{\item How to write the literature review
+ \item Citation and referencing in IEEE format
+ \item Reviewing existing systems (Google Classroom, Moodle, campus ERPs)}
+{\item Learned the IEEE citation style
+ \item Collected reference papers and compared existing platforms}
+{\item None}
+{\item Complete the literature review draft
+ \item Prepare the reference list}
+
+\logsheet{04}{27/12/2025}{9:00 AM}{10:00 AM}
+{\item Reviewed the Introduction and Literature Review chapters
+ \item Finalized the functional and non-functional requirements
+ \item Feasibility study (technical, operational, economic, and schedule)}
+{\item Chapters 1 and 2 completed
+ \item Requirements and feasibility confirmed}
+{\item None}
+{\item Start the system design and UML modelling
+ \item Finalize the technology stack}
+
+\logsheet{05}{10/01/2026}{9:00 AM}{10:00 AM}
+{\item System analysis and design chapter writing
+ \item Diagrams: use case, ER, data flow, sequence, activity, and architecture
+ \item Project proposal format and mid-defense preparation}
+{\item Drafted the use-case and ER diagrams
+ \item Understood the proposal structure}
+{\item None}
+{\item Complete all the diagrams
+ \item Submit the project proposal}
+
+\logsheet{06}{24/01/2026}{9:00 AM}{10:00 AM}
+{\item Reviewed the use-case, ER, and data flow diagrams
+ \item Technology stack confirmation (Angular, Node.js and Express, MongoDB, Socket.io)}
+{\item All diagrams approved by the supervisor
+ \item Development environment set up (VS Code, Node.js, Git and GitHub)}
+{\item Confusion in showing ER relationships (one-to-many vs many-to-many); the supervisor helped to correct them}
+{\item Start frontend development (registration and login)
+ \item Set up the Angular and Express project structure}
+
+\logsheet{07}{07/02/2026}{9:00 AM}{10:00 AM}
+{\item Registration, login, and JWT authentication progress
+ \item Role-based dashboards (student, faculty, secretary, and administrator)
+ \item Attendance methods (manual, OTP, and face recognition)}
+{\item Authentication and role-based access working
+ \item MongoDB connected and the Khalti fee payment integrated
+ \item Separate dashboards completed for each role}
+{\item Face-recognition matching needed tuning; resolved by adjusting the confidence threshold}
+{\item Implement the real-time messaging module
+ \item Prepare for the mid defense}
+
+\logsheet{08}{07/03/2026}{9:00 AM}{10:00 AM}
+{\item Mid-defense presentation to the supervisor and examiners
+ \item Live demo (registration, login, enrollment, attendance, fee payment, and messaging)
+ \item Questions and feedback}
+{\item Mid defense cleared successfully
+ \item Supervisor appreciated the working prototype
+ \item Received constructive feedback}
+{\item The user interface was pointed out as too plain and needing polish
+ \item The examiners noted that the test cases were not sufficient
+ \item A question on multi-campus scalability was raised; explained as future scope}
+{\item Improve the user-interface design
+ \item Add more unit and system test cases
+ \item Complete the remaining report chapters}
+
+\logsheet{09}{28/03/2026}{9:00 AM}{10:00 AM}
+{\item Final report review (all chapters)
+ \item Abstract, conclusion, and future recommendations
+ \item Final-defense presentation and viva preparation}
+{\item Final report draft completed in LaTeX
+ \item All diagrams inserted correctly
+ \item Abstract and conclusion finalized and slides prepared}
+{\item Figure placement in LaTeX was difficult; solved using the [H] option with the float package
+ \item Formatting the test-case tables was hard; solved using longtable}
+{\item Submit the final report
+ \item Prepare answers for the viva}
+
+\logsheet{10}{09/05/2026}{10:00 AM}{11:00 AM}
+{\item Final-defense schedule and date confirmation
+ \item Rules and regulations, presentation duration, and dress code
+ \item Documents to bring, backup slides, and live-demo guidelines}
+{\item Understood all the rules and regulations for the final defense
+ \item Prepared a checklist for defense day}
+{\item None}
+{\item Appear for the final defense
+ \item Submit the hard copy of the report}
 
 % =====================================================================
 % REFERENCES (IEEE)
