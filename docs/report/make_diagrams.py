@@ -396,6 +396,8 @@ skinparam DefaultFontName Helvetica
 skinparam DefaultFontSize 12
 skinparam dpi 150
 skinparam sequenceMessageAlign center
+skinparam sequenceArrowThickness 1.4
+skinparam responseMessageBelowArrow false
 
 actor Student
 participant "Angular SPA" as SPA
